@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
+        currentIndex: 0,
         items: [
           BottomNavigationBarItem(
             title: Text('Top Stories'),
@@ -71,10 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
         onTap: (index) {
-          if (index == 0)
-            print('Top Stories tapped');
-          else
-            print('New Stories tapped');
+          if (index == 0) {
+            widget.bloc.storiesType.add(StoriesType.topStories);
+          } else {
+            widget.bloc.storiesType.add(StoriesType.newStories);
+          }
         },
       ),
     );
