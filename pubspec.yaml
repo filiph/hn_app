@@ -11,6 +11,8 @@ dependencies:
 
   rxdart: ^0.18.1
 
+  font_awesome_flutter: ^7.1.0
+
   flutter:
     sdk: flutter
 
