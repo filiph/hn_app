@@ -12,6 +12,7 @@ class HackerNewsApiError extends Error {
 }
 
 class HackerNewsBloc {
+  HashMap<int, Article> _cachedArticles;
   static const _baseUrl = 'https://hacker-news.firebaseio.com/v0/';
 
   final _isLoadingSubject = BehaviorSubject<bool>(seedValue: false);
@@ -23,6 +24,7 @@ class HackerNewsBloc {
   final _storiesTypeController = StreamController<StoriesType>();
 
   HackerNewsBloc() {
+    _cachedArticles = HashMap<int, Article>();
     _initializeArticles();
 
     _storiesTypeController.stream.listen((storiesType) async {
@@ -36,22 +38,31 @@ class HackerNewsBloc {
 
   Sink<StoriesType> get storiesType => _storiesTypeController.sink;
 
+  Future<void> _initializeArticles() async {
+    _getArticlesAndUpdate(await _getIds(StoriesType.topStories));
+  }
+
   void close() {
     _storiesTypeController.close();
   }
 
   Future<Article> _getArticle(int id) async {
-    final storyUrl = '${_baseUrl}item/$id.json';
-    final storyRes = await http.get(storyUrl);
-    if (storyRes.statusCode == 200) {
-      return parseArticle(storyRes.body);
+    if (!_cachedArticles.containsKey(id)) {
+      final storyUrl = '${_baseUrl}item/$id.json';
+      final storyRes = await http.get(storyUrl);
+      if (storyRes.statusCode == 200) {
+        _cachedArticles[id] = parseArticle(storyRes.body);
+      } else {
+        throw HackerNewsApiError("Article $id couldn't be fetched.");
+      }
     }
-    throw HackerNewsApiError("Article $id couldn't be fetched.");
+    return _cachedArticles[id];
   }
 
   _getArticlesAndUpdate(List<int> ids) async {
     _isLoadingSubject.add(true);
     await _updateArticles(ids);
+
     _articlesSubject.add(UnmodifiableListView(_articles));
     _isLoadingSubject.add(false);
   }
@@ -64,10 +75,6 @@ class HackerNewsBloc {
       throw HackerNewsApiError("Stories $type couldn't be fetched.");
     }
     return parseTopStories(response.body).take(10).toList();
-  }
-
-  Future<void> _initializeArticles() async {
-    _getArticlesAndUpdate(await _getIds(StoriesType.topStories));
   }
 
   Future<Null> _updateArticles(List<int> articleIds) async {

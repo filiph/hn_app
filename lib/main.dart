@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text(article.type),
+              Text('${article.descendants} comments'),
               IconButton(
                 icon: Icon(Icons.launch),
                 onPressed: () async {
