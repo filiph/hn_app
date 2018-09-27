@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'dart:collection';
 
-import 'dart:async';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/hn_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -117,7 +117,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class LoadingInfo extends StatefulWidget {
-  Stream<bool> _isLoading;
+  final Stream<bool> _isLoading;
+
   LoadingInfo(this._isLoading);
 
   createState() => LoadingInfoState();
