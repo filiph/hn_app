@@ -10,3 +10,4 @@ ios/.generated/
 ios/.symlinks/
 packages
 .flutter-plugins
+android/key.properties
