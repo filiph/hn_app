@@ -7,5 +7,6 @@
 .pub/
 build/
 ios/.generated/
+ios/.symlinks/
 packages
 .flutter-plugins
