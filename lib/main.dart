@@ -1,10 +1,9 @@
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/hn_bloc.dart';
+import 'package:hn_app/src/loading_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
           canvasColor: Colors.black,
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
-              subhead: TextStyle(fontFamily: 'PressStart', fontSize: 10.0))),
+              subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
       home: MyHomePage(
         title: 'Flutter Hacker News',
         bloc: bloc,
@@ -54,13 +53,30 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-//        title: Text(widget.title),
+        title: Text(widget.title),
         leading: LoadingInfo(widget.bloc.isLoading),
         elevation: 0.0,
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () async {
+                    final Article result = await showSearch(
+                      context: context,
+                      delegate: ArticleSearch(widget.bloc.articles),
+                    );
+                    if (result != null && await canLaunch(result.url)) {
+                      launch(result.url);
+                    }
+                  },
+                ),
+          ),
+        ],
       ),
       body: StreamBuilder<UnmodifiableListView<Article>>(
         stream: widget.bloc.articles,
@@ -127,42 +143,102 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class LoadingInfo extends StatefulWidget {
-  final Stream<bool> _isLoading;
+class ArticleSearch extends SearchDelegate<Article> {
+  final Stream<UnmodifiableListView<Article>> articles;
 
-  LoadingInfo(this._isLoading);
-
-  createState() => LoadingInfoState();
-}
-
-class LoadingInfoState extends State<LoadingInfo>
-    with TickerProviderStateMixin {
-  AnimationController _controller;
+  ArticleSearch(this.articles);
 
   @override
-  void initState() {
-    super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
   }
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: widget._isLoading,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          //if (snapshot.hasData && snapshot.data) {
-          _controller.forward().then((Null f) {
-            _controller.reverse();
-          });
-          return FadeTransition(
-            child: Icon(FontAwesomeIcons.hackerNewsSquare),
-            opacity: Tween(begin: .5, end: 1.0).animate(
-                CurvedAnimation(curve: Curves.easeIn, parent: _controller)),
-          );
-          //}
-          //_controller.reverse();
-          //return Container();
-        });
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return StreamBuilder<UnmodifiableListView<Article>>(
+      stream: articles,
+      builder:
+          (context, AsyncSnapshot<UnmodifiableListView<Article>> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+              child: Text(
+            'No data!',
+          ));
+        }
+
+        final results = snapshot.data
+            .where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
+
+        return ListView(
+          children: results
+              .map<ListTile>((a) => ListTile(
+                    title: Text(a.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .subhead
+                            .copyWith(fontSize: 16.0)),
+                    leading: Icon(Icons.book),
+                    onTap: () async {
+                      if (await canLaunch(a.url)) {
+                        await launch(a.url);
+                      }
+                      close(context, a);
+                    },
+                  ))
+              .toList(),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return StreamBuilder<UnmodifiableListView<Article>>(
+      stream: articles,
+      builder:
+          (context, AsyncSnapshot<UnmodifiableListView<Article>> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+              child: Text(
+            'No data!',
+          ));
+        }
+
+        final results = snapshot.data
+            .where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
+
+        return ListView(
+          children: results
+              .map<ListTile>((a) => ListTile(
+                    title: Text(a.title,
+                        style: Theme.of(context).textTheme.subhead.copyWith(
+                              fontSize: 16.0,
+                              color: Colors.blue,
+                            )),
+                    onTap: () {
+                      close(context, a);
+                    },
+                  ))
+              .toList(),
+        );
+      },
+    );
   }
 }

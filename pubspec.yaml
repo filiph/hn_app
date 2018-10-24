@@ -36,6 +36,13 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: PressStart
+    - family: Garamond
       fonts:
-        - asset: fonts/PressStart2P-Regular.ttf
+      - asset: fonts/EBGaramond-Regular.ttf
+      - asset: fonts/EBGaramond-Italic.ttf
+        style: italic
+      - asset: fonts/EBGaramond-Bold.ttf
+        weight: 700
+      - asset: fonts/EBGaramond-BoldItalic.ttf
+        weight: 700
+        style: italic
