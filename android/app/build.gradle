@@ -27,7 +27,10 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 def keystorePropertiesFile = rootProject.file("key.properties")
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+// If you want to publish, uncomment this line, provide a key.properties file, 
+// and uncomment the lines in the signingConfigs section. 
+// See https://flutter.io/docs/deployment/android for more info.
+//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 27
@@ -52,10 +55,13 @@ android {
 
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            // If you want to publish, uncomment the following lines and provide a 
+            // key.properties file. Also uncomment the keystoreProperties.load line.
+            // See https://flutter.io/docs/deployment/android for more info.
+            //keyAlias keystoreProperties['keyAlias']
+            //keyPassword keystoreProperties['keyPassword']
+            //storeFile file(keystoreProperties['storeFile'])
+            //storePassword keystoreProperties['storePassword']
         }
     }
     buildTypes {
