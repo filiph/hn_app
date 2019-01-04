@@ -134,26 +134,32 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            child: Column(
               children: <Widget>[
-                Text('${article.descendants} comments'),
-                SizedBox(width: 16.0),
-                IconButton(
-                  icon: Icon(Icons.launch),
-                  onPressed: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HackerNewsWebPage(article.url)));
-                    /*
-                    if (await canLaunch(article.url)) {
-                      launch(article.url);
-                    }
-                    */
-                  },
-                )
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text('${article.descendants} comments'),
+                    SizedBox(width: 16.0),
+                    IconButton(
+                      icon: Icon(Icons.launch),
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    HackerNewsWebPage(article.url)));
+                      },
+                    )
+                  ],
+                ),
+                Container(
+                  height: 200,
+                  child: WebView(
+                    javaScriptMode: JavaScriptMode.unrestricted,
+                    initialUrl: article.url,
+                  ),
+                ),
               ],
             ),
           ),
