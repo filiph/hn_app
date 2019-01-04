@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/hn_bloc.dart';
@@ -158,6 +160,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: WebView(
                     javaScriptMode: JavaScriptMode.unrestricted,
                     initialUrl: article.url,
+                    gestureRecognizers: Set()
+                      ..add(Factory<VerticalDragGestureRecognizer>(
+                          () => VerticalDragGestureRecognizer())),
                   ),
                 ),
               ],
