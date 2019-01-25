@@ -12,6 +12,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 void main() {
   final hnBloc = HackerNewsBloc();
   runApp(MyApp(bloc: hnBloc));
+  // TODO(filiph): DO WE CLOSE THE BLOCK SUBSCRIPTIONS HERE?!
 }
 
 class MyApp extends StatelessWidget {
@@ -71,7 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () async {
                     final Article result = await showSearch(
                       context: context,
-                      delegate: ArticleSearch(widget.bloc.articles),
+                      delegate: ArticleSearch(_currentIndex == 0
+                          ? widget.bloc.topArticles
+                          : widget.bloc.newArticles),
                     );
                     if (result != null) {
                       Navigator.push(
@@ -80,26 +83,28 @@ class _MyHomePageState extends State<MyHomePage> {
                               builder: (context) =>
                                   HackerNewsWebPage(result.url)));
                     }
-                    /*
-                    if (result != null && await canLaunch(result.url)) {
-                      launch(
-                        result.url,
-                        forceWebView: true,
-                      );
-                    }
-                    */
                   },
                 ),
           ),
         ],
       ),
-      body: StreamBuilder<UnmodifiableListView<Article>>(
-        stream: widget.bloc.articles,
-        initialData: UnmodifiableListView<Article>([]),
-        builder: (context, snapshot) => ListView(
-              children: snapshot.data.map(_buildItem).toList(),
+      body: _currentIndex == 0
+          ? StreamBuilder<UnmodifiableListView<Article>>(
+              stream: widget.bloc.topArticles,
+              initialData: UnmodifiableListView<Article>([]),
+              builder: (context, snapshot) => ListView(
+                    key: PageStorageKey(0),
+                    children: snapshot.data.map(_buildItem).toList(),
+                  ),
+            )
+          : StreamBuilder<UnmodifiableListView<Article>>(
+              stream: widget.bloc.newArticles,
+              initialData: UnmodifiableListView<Article>([]),
+              builder: (context, snapshot) => ListView(
+                    key: PageStorageKey(1),
+                    children: snapshot.data.map(_buildItem).toList(),
+                  ),
             ),
-      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: [
@@ -128,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildItem(Article article) {
     return Padding(
-      key: Key(article.title),
+      key: PageStorageKey(article.title),
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12.0),
       child: ExpansionTile(
         title:
