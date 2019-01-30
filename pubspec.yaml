@@ -3,6 +3,9 @@ description: A new Flutter application.
 
 version: 0.0.2+2
 
+environment:
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+
 dependencies:
   url_launcher: any
 
@@ -29,7 +32,7 @@ dev_dependencies:
       url: https://github.com/efortuna/built_value.dart.git/
       path: built_value_generator
 
-  test: ^1.5.3 
+  test: ^1.5.1
   flutter_test:
     sdk: flutter
 
