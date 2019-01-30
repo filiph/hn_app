@@ -25,6 +25,8 @@ dependencies:
 
   cupertino_icons: ^0.1.0
 
+  shared_preferences: ^0.5.0
+
 dev_dependencies:
   build_runner: ^1.0.0
   built_value_generator:

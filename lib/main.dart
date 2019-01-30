@@ -6,21 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/hn_bloc.dart';
 import 'package:hn_app/src/loading_info.dart';
+import 'package:hn_app/src/prefs_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   final hnBloc = HackerNewsBloc();
-  runApp(MyApp(bloc: hnBloc));
+  final prefsBloc = PrefsBloc();
+
+  runApp(MyApp(
+    hackerNewsBloc: hnBloc,
+    prefsBloc: prefsBloc,
+  ));
   // TODO(filiph): DO WE CLOSE THE BLOCK SUBSCRIPTIONS HERE?!
 }
 
 class MyApp extends StatelessWidget {
-  final HackerNewsBloc bloc;
+  final HackerNewsBloc hackerNewsBloc;
+  final PrefsBloc prefsBloc;
 
   MyApp({
     Key key,
-    this.bloc,
+    this.hackerNewsBloc,
+    this.prefsBloc,
   }) : super(key: key);
 
   static const primaryColor = Colors.white;
@@ -38,18 +46,25 @@ class MyApp extends StatelessWidget {
               subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
       home: MyHomePage(
         title: 'Flutter Hacker News',
-        bloc: bloc,
+        hackerNewsBloc: hackerNewsBloc,
+        prefsBloc: prefsBloc,
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  final HackerNewsBloc bloc;
+  final HackerNewsBloc hackerNewsBloc;
+  final PrefsBloc prefsBloc;
 
   final String title;
 
-  MyHomePage({Key key, this.title, this.bloc}) : super(key: key);
+  MyHomePage({
+    Key key,
+    this.title,
+    this.hackerNewsBloc,
+    this.prefsBloc,
+  }) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -63,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        leading: LoadingInfo(widget.bloc.isLoading),
+        leading: LoadingInfo(widget.hackerNewsBloc.isLoading),
         elevation: 0.0,
         actions: [
           Builder(
@@ -73,8 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     final Article result = await showSearch(
                       context: context,
                       delegate: ArticleSearch(_currentIndex == 0
-                          ? widget.bloc.topArticles
-                          : widget.bloc.newArticles),
+                          ? widget.hackerNewsBloc.topArticles
+                          : widget.hackerNewsBloc.newArticles),
                     );
                     if (result != null) {
                       Navigator.push(
@@ -90,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _currentIndex == 0
           ? StreamBuilder<UnmodifiableListView<Article>>(
-              stream: widget.bloc.topArticles,
+              stream: widget.hackerNewsBloc.topArticles,
               initialData: UnmodifiableListView<Article>([]),
               builder: (context, snapshot) => ListView(
                     key: PageStorageKey(0),
@@ -98,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
             )
           : StreamBuilder<UnmodifiableListView<Article>>(
-              stream: widget.bloc.newArticles,
+              stream: widget.hackerNewsBloc.newArticles,
               initialData: UnmodifiableListView<Article>([]),
               builder: (context, snapshot) => ListView(
                     key: PageStorageKey(1),
@@ -119,9 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         onTap: (index) {
           if (index == 0) {
-            widget.bloc.storiesType.add(StoriesType.topStories);
+            widget.hackerNewsBloc.storiesType.add(StoriesType.topStories);
           } else {
-            widget.bloc.storiesType.add(StoriesType.newStories);
+            widget.hackerNewsBloc.storiesType.add(StoriesType.newStories);
           }
           setState(() {
             _currentIndex = index;
@@ -160,15 +175,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   ],
                 ),
-                Container(
-                  height: 200,
-                  child: WebView(
-                    javaScriptMode: JavaScriptMode.unrestricted,
-                    initialUrl: article.url,
-                    gestureRecognizers: Set()
-                      ..add(Factory<VerticalDragGestureRecognizer>(
-                          () => VerticalDragGestureRecognizer())),
-                  ),
+                StreamBuilder<PrefsState>(
+                  stream: widget.prefsBloc.currentPrefs,
+                  builder: (context, snapshot) {
+                    if (snapshot.data?.showWebView == true) {
+                      return Container(
+                        height: 200,
+                        child: WebView(
+                          javaScriptMode: JavaScriptMode.unrestricted,
+                          initialUrl: article.url,
+                          gestureRecognizers: Set()
+                            ..add(Factory<VerticalDragGestureRecognizer>(
+                                () => VerticalDragGestureRecognizer())),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
               ],
             ),
@@ -281,6 +305,7 @@ class ArticleSearch extends SearchDelegate<Article> {
 
 class HackerNewsWebPage extends StatelessWidget {
   HackerNewsWebPage(this.url);
+
   final String url;
 
   @override
