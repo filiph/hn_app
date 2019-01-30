@@ -29,6 +29,7 @@ dev_dependencies:
       url: https://github.com/efortuna/built_value.dart.git/
       path: built_value_generator
 
+  test: ^1.5.3 
   flutter_test:
     sdk: flutter
 
