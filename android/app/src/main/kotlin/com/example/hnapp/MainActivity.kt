@@ -1,11 +1,11 @@
-package hnapp.flutter.io.hnapp
+package com.example.hnapp
 
 import android.os.Bundle
 
 import io.flutter.app.FlutterActivity
 import io.flutter.plugins.GeneratedPluginRegistrant
 
-class MainActivity(): FlutterActivity() {
+class MainActivity: FlutterActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     GeneratedPluginRegistrant.registerWith(this)
