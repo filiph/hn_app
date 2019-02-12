@@ -12,7 +12,7 @@ class HackerNewsApiError extends Error {
 }
 
 class HackerNewsBloc {
-  HashMap<int, Article> _cachedArticles;
+  Map<int, Article> _cachedArticles;
   static const _baseUrl = 'https://hacker-news.firebaseio.com/v0/';
 
   final _isLoadingSubject = BehaviorSubject<bool>(seedValue: false);
@@ -24,8 +24,7 @@ class HackerNewsBloc {
 
   final _storiesTypeController = StreamController<StoriesType>();
 
-  HackerNewsBloc() {
-    _cachedArticles = HashMap<int, Article>();
+  HackerNewsBloc() : _cachedArticles = Map() {
     _initializeArticles();
 
     _storiesTypeController.stream.listen((storiesType) async {
@@ -54,6 +53,8 @@ class HackerNewsBloc {
 
   void close() {
     _storiesTypeController.close();
+    _topArticlesSubject.close();
+    _newArticlesSubject.close();
   }
 
   Future<Article> _getArticle(int id) async {
@@ -90,8 +91,9 @@ class HackerNewsBloc {
 
   Future<Null> _updateArticles(List<int> articleIds) async {
     final futureArticles = articleIds.map((id) => _getArticle(id));
-    final articles = await Future.wait(futureArticles);
-    _articles = articles;
+    final all = await Future.wait(futureArticles);
+    final filtered = all.where((a) => a.title != null).toList();
+    _articles = filtered;
   }
 }
 
