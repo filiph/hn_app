@@ -1,8 +1,9 @@
 # hn_app
 
-A new Flutter application.
+A HackerNews reader app in Flutter.
 
-## Getting Started
+## Development
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+If the `Article` API gets changed, you should run:
+
+`$ flutter packages pub run build_runner build --delete-conflicting-outputs`

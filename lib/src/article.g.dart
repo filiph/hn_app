@@ -3,16 +3,21 @@
 part of 'article.dart';
 
 // **************************************************************************
-// Generator: BuiltValueGenerator
+// BuiltValueGenerator
 // **************************************************************************
 
 // ignore_for_file: always_put_control_body_on_new_line
 // ignore_for_file: annotate_overrides
 // ignore_for_file: avoid_annotating_with_dynamic
+// ignore_for_file: avoid_catches_without_on_clauses
 // ignore_for_file: avoid_returning_this
+// ignore_for_file: lines_longer_than_80_chars
 // ignore_for_file: omit_local_variable_types
 // ignore_for_file: prefer_expression_function_bodies
 // ignore_for_file: sort_constructors_first
+// ignore_for_file: unnecessary_const
+// ignore_for_file: unnecessary_new
+// ignore_for_file: test_types_in_equals
 
 Serializer<Article> _$articleSerializer = new _$ArticleSerializer();
 
@@ -24,7 +29,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
 
   @override
   Iterable serialize(Serializers serializers, Article object,
-      {FullType specifiedType: FullType.unspecified}) {
+      {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(int)),
@@ -103,7 +108,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
 
   @override
   Article deserialize(Serializers serializers, Iterable serialized,
-      {FullType specifiedType: FullType.unspecified}) {
+      {FullType specifiedType = FullType.unspecified}) {
     final result = new ArticleBuilder();
 
     final iterator = serialized.iterator;
@@ -235,12 +240,24 @@ class _$Article extends Article {
       this.parts,
       this.descendants})
       : super._() {
-    if (id == null) throw new BuiltValueNullFieldError('Article', 'id');
-    if (type == null) throw new BuiltValueNullFieldError('Article', 'type');
-    if (by == null) throw new BuiltValueNullFieldError('Article', 'by');
-    if (time == null) throw new BuiltValueNullFieldError('Article', 'time');
-    if (kids == null) throw new BuiltValueNullFieldError('Article', 'kids');
-    if (parts == null) throw new BuiltValueNullFieldError('Article', 'parts');
+    if (id == null) {
+      throw new BuiltValueNullFieldError('Article', 'id');
+    }
+    if (type == null) {
+      throw new BuiltValueNullFieldError('Article', 'type');
+    }
+    if (by == null) {
+      throw new BuiltValueNullFieldError('Article', 'by');
+    }
+    if (time == null) {
+      throw new BuiltValueNullFieldError('Article', 'time');
+    }
+    if (kids == null) {
+      throw new BuiltValueNullFieldError('Article', 'kids');
+    }
+    if (parts == null) {
+      throw new BuiltValueNullFieldError('Article', 'parts');
+    }
   }
 
   @override
@@ -251,10 +268,10 @@ class _$Article extends Article {
   ArticleBuilder toBuilder() => new ArticleBuilder()..replace(this);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    if (other is! Article) return false;
-    return id == other.id &&
+    return other is Article &&
+        id == other.id &&
         deleted == other.deleted &&
         type == other.type &&
         by == other.by &&
@@ -414,7 +431,9 @@ class ArticleBuilder implements Builder<Article, ArticleBuilder> {
 
   @override
   void replace(Article other) {
-    if (other == null) throw new ArgumentError.notNull('other');
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
     _$v = other as _$Article;
   }
 
