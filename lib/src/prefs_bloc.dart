@@ -39,13 +39,13 @@ class PrefsBloc {
   }
 
   Future<void> _loadSharedPrefs() async {
-    final sharedPrefs = await SharedPreferences.getInstance();
-    final showWebView = sharedPrefs.getBool('showWebView') ?? true;
+    var sharedPrefs = await SharedPreferences.getInstance();
+    var showWebView = sharedPrefs.getBool('showWebView') ?? true;
     _currentPrefs.add(PrefsState(showWebView));
   }
 
   Future<void> _saveNewPrefs(PrefsState newState) async {
-    final sharedPrefs = await SharedPreferences.getInstance();
+    var sharedPrefs = await SharedPreferences.getInstance();
     await sharedPrefs.setBool('showWebView', newState.showWebView);
     _currentPrefs.add(newState);
   }

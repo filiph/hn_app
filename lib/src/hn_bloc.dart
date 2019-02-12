@@ -59,8 +59,8 @@ class HackerNewsBloc {
 
   Future<Article> _getArticle(int id) async {
     if (!_cachedArticles.containsKey(id)) {
-      final storyUrl = '${_baseUrl}item/$id.json';
-      final storyRes = await http.get(storyUrl);
+      var storyUrl = '${_baseUrl}item/$id.json';
+      var storyRes = await http.get(storyUrl);
       if (storyRes.statusCode == 200) {
         _cachedArticles[id] = parseArticle(storyRes.body);
       } else {
@@ -80,9 +80,9 @@ class HackerNewsBloc {
   }
 
   Future<List<int>> _getIds(StoriesType type) async {
-    final partUrl = type == StoriesType.topStories ? 'top' : 'new';
-    final url = '$_baseUrl${partUrl}stories.json';
-    final response = await http.get(url);
+    var partUrl = type == StoriesType.topStories ? 'top' : 'new';
+    var url = '$_baseUrl${partUrl}stories.json';
+    var response = await http.get(url);
     if (response.statusCode != 200) {
       throw HackerNewsApiError("Stories $type couldn't be fetched.");
     }
@@ -90,9 +90,9 @@ class HackerNewsBloc {
   }
 
   Future<Null> _updateArticles(List<int> articleIds) async {
-    final futureArticles = articleIds.map((id) => _getArticle(id));
-    final all = await Future.wait(futureArticles);
-    final filtered = all.where((a) => a.title != null).toList();
+    var futureArticles = articleIds.map((id) => _getArticle(id));
+    var all = await Future.wait(futureArticles);
+    var filtered = all.where((a) => a.title != null).toList();
     _articles = filtered;
   }
 }

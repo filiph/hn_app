@@ -11,8 +11,8 @@ import 'package:hn_app/src/widgets/search.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
-  final hnBloc = HackerNewsBloc();
-  final prefsBloc = PrefsBloc();
+  var hnBloc = HackerNewsBloc();
+  var prefsBloc = PrefsBloc();
 
   runApp(MyApp(
     hackerNewsBloc: hnBloc,
@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
-              final Article result = await showSearch(
+              var result = await showSearch(
                 context: context,
                 delegate: ArticleSearch(_currentIndex == 0
                     ? widget.hackerNewsBloc.topArticles
