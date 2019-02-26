@@ -7,6 +7,7 @@ import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/hn_bloc.dart';
 import 'package:hn_app/src/loading_info.dart';
 import 'package:hn_app/src/prefs_bloc.dart';
+import 'package:hn_app/src/widgets/headline.dart';
 import 'package:hn_app/src/widgets/search.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -72,7 +73,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Hacker News'),
+        title: Headline(
+          text: _currentIndex == 0
+              ? 'Flutter HackerNews: Top'
+              : 'Flutter HackerNews: New',
+          index: _currentIndex,
+        ),
         leading: LoadingInfo(widget.hackerNewsBloc.isLoading),
         elevation: 0.0,
         actions: [
