@@ -40,7 +40,7 @@ class PrefsBloc {
 
   Future<void> _loadSharedPrefs() async {
     var sharedPrefs = await SharedPreferences.getInstance();
-    var showWebView = sharedPrefs.getBool('showWebView') ?? true;
+    var showWebView = sharedPrefs.getBool('showWebView') ?? false;
     _currentPrefs.add(PrefsState(showWebView));
   }
 
