@@ -4,7 +4,7 @@ class Headline extends ImplicitlyAnimatedWidget {
   final String text;
   final int index;
 
-  Color get targetColor => index == 0 ? Colors.red : Colors.blue;
+  Color get targetColor => index == 0 ? Colors.blue : Colors.deepOrange;
 
   Headline({@required this.text, @required this.index, Key key})
       : super(key: key, duration: const Duration(milliseconds: 600));

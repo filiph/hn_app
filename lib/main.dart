@@ -74,9 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Headline(
-          text: _currentIndex == 0
-              ? 'Flutter HackerNews: Top'
-              : 'Flutter HackerNews: New',
+          text: _currentIndex == 0 ? 'Top Stories' : 'New Stories',
           index: _currentIndex,
         ),
         leading: LoadingInfo(widget.hackerNewsBloc.isLoading),
