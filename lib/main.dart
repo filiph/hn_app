@@ -168,7 +168,16 @@ class _Item extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text('${article.descendants} comments'),
+                    FlatButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                            HackerNewsCommentPage(article.id),
+                        ),
+                      ),
+                      child: Text('${article.descendants} comments'),
+                    ),
                     SizedBox(width: 16.0),
                     IconButton(
                       icon: Icon(Icons.launch),
@@ -221,6 +230,25 @@ class HackerNewsWebPage extends StatelessWidget {
       ),
       body: WebView(
         initialUrl: url,
+        javaScriptMode: JavaScriptMode.unrestricted,
+      ),
+    );
+  }
+}
+
+class HackerNewsCommentPage extends StatelessWidget {
+  final int id;
+
+  HackerNewsCommentPage(this.id);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Comments'),
+      ),
+      body: WebView(
+        initialUrl: 'https://news.ycombinator.com/item?id=${id}',
         javaScriptMode: JavaScriptMode.unrestricted,
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const Duration headlineAnimationDuration = const Duration(milliseconds: 600);
+
 class Headline extends ImplicitlyAnimatedWidget {
   final String text;
   final int index;
@@ -7,7 +9,7 @@ class Headline extends ImplicitlyAnimatedWidget {
   Color get targetColor => index == 0 ? Colors.blue : Colors.deepOrange;
 
   Headline({@required this.text, @required this.index, Key key})
-      : super(key: key, duration: const Duration(milliseconds: 600));
+      : super(key: key, duration: headlineAnimationDuration);
 
   @override
   HeadlineState createState() {
@@ -16,9 +18,9 @@ class Headline extends ImplicitlyAnimatedWidget {
 }
 
 class HeadlineState extends AnimatedWidgetBaseState<Headline> {
-  _GhostFadeTween _colorTween;
+  GhostFadeTween _colorTween;
 
-  _SwitchStringTween _switchStringTween;
+  SwitchStringTween _switchStringTween;
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +35,22 @@ class HeadlineState extends AnimatedWidgetBaseState<Headline> {
     _colorTween = visitor(
       _colorTween,
       widget.targetColor,
-      (color) => _GhostFadeTween(begin: color),
+      (color) => GhostFadeTween(begin: color),
     );
 
     _switchStringTween = visitor(
       _switchStringTween,
       widget.text,
-      (value) => _SwitchStringTween(begin: value),
+      (value) => SwitchStringTween(begin: value),
     );
   }
 }
 
-class _GhostFadeTween extends Tween<Color> {
+@visibleForTesting
+class GhostFadeTween extends Tween<Color> {
   final Color middle = Colors.white;
 
-  _GhostFadeTween({Color begin, Color end}) : super(begin: begin, end: end);
+  GhostFadeTween({Color begin, Color end}) : super(begin: begin, end: end);
 
   Color lerp(double t) {
     if (t < 0.5) {
@@ -58,8 +61,9 @@ class _GhostFadeTween extends Tween<Color> {
   }
 }
 
-class _SwitchStringTween extends Tween<String> {
-  _SwitchStringTween({String begin, String end})
+@visibleForTesting
+class SwitchStringTween extends Tween<String> {
+  SwitchStringTween({String begin, String end})
       : super(begin: begin, end: end);
 
   String lerp(double t) {
