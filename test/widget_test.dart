@@ -6,54 +6,52 @@
 // import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hn_app/main.dart';
-// import 'package:hn_app/src/widgets/headline.dart';
+import 'package:hn_app/src/widgets/headline.dart';
 
 void main() {
-  testWidgets('clicking tile opens it', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  testWidgets('headline animates and changes text correctly',
+      (WidgetTester tester) async {
+    String text = "Foo";
+    int index = 0;
+    Key buttonKey = GlobalKey();
+    Key headlineKey = GlobalKey();
 
-    expect(find.byIcon(Icons.launch), findsNothing);
+    Widget widget = StatefulBuilder(
+      builder: (BuildContext context, void Function(void Function()) setState) {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            children: <Widget>[
+              Headline(
+                key: headlineKey,
+                text: text,
+                index: index,
+              ),
+              FlatButton(
+                onPressed: () {
+                  setState(() {
+                    text = 'Bar';
+                    index = 1;
+                  });
+                },
+                child: Text("Tap"),
+                key: buttonKey,
+              )
+            ],
+          ),
+        );
+      },
+    );
+    await tester.pumpWidget(
+      widget,
+    );
 
-    await tester.tap(find.byType(ExpansionTile).first);
+    expect(find.text('Foo'), findsOneWidget);
+
     await tester.pump();
 
-    expect(find.byIcon(Icons.launch), findsOneWidget);
-  }, skip: true);
+    await tester.tap(find.byKey(buttonKey));
 
-  // testWidgets('headline animates and changes text correctly',
-  //     (WidgetTester tester) async {
-  //   final controller = StreamController<String>();
-  //   Stream<String> headlineStream = controller.stream;
-
-  //   Widget widget = StatefulBuilder(
-  //     builder: (BuildContext context, snapshot) {
-  //       print(snapshot.data);
-  //       if (!snapshot.hasData) {
-  //         return Container();
-  //       }
-  //       return Directionality(
-  //         textDirection: TextDirection.ltr,
-  //         child: Headline(
-  //           text: snapshot.data,
-  //           index: 0,
-  //         ),
-  //       );
-  //     },
-  //   );
-  //   await tester.pumpWidget(
-  //     widget,
-  //   );
-
-  //   controller.add('Foo');
-
-  //   await tester.pump();
-
-  //   await expectLater(find.text('Foo'), findsOneWidget);
-
-  //   controller.add('Bar');
-
-  //   controller.close();
-  // });
+    await tester.pumpAndSettle();
+  });
 }
