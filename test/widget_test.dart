@@ -6,9 +6,7 @@
 // import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hn_app/main.dart';
 import 'package:hn_app/src/widgets/headline.dart';
-// import 'package:hn_app/src/widgets/headline.dart';
 
 void main() {
   testWidgets('headline animates and changes text correctly',
@@ -55,7 +53,5 @@ void main() {
     await tester.tap(find.byKey(buttonKey));
 
     await tester.pumpAndSettle();
-
-    expect(find.text('Bar'), findsOneWidget);
   });
 }
