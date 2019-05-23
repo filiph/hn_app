@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 const Duration headlineAnimationDuration = const Duration(milliseconds: 600);
+const List<Color> headlineTextColors = [Colors.blue, Colors.deepOrange];
 
 class Headline extends ImplicitlyAnimatedWidget {
   final String text;
   final int index;
 
-  Color get targetColor => index == 0 ? Colors.blue : Colors.deepOrange;
+  Color get targetColor => headlineTextColors[index];
 
   Headline({@required this.text, @required this.index, Key key})
       : super(key: key, duration: headlineAnimationDuration);
