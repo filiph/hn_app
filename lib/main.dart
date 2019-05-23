@@ -15,7 +15,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(builder: (_) => HackerNewsNotifier()),
-        Provider(builder: (_) => PrefsBloc()),
+        ChangeNotifierProvider(builder: (_) => PrefsNotifier()),
       ],
       child: MyApp(),
     ),
@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: bloc.articles
                   .map((a) => _Item(
                         article: a,
-                        prefsBloc: Provider.of<PrefsBloc>(context),
+                        prefsBloc: Provider.of<PrefsNotifier>(context),
                       ))
                   .toList(),
             ),
@@ -122,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class _Item extends StatelessWidget {
   final Article article;
-  final PrefsBloc prefsBloc;
+  final PrefsNotifier prefsBloc;
 
   const _Item({
     Key key,
@@ -132,6 +132,8 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final prefs = Provider.of<PrefsNotifier>(context);
+
     assert(article.title != null);
     return Padding(
       key: PageStorageKey(article.title),
@@ -167,25 +169,18 @@ class _Item extends StatelessWidget {
                     )
                   ],
                 ),
-                StreamBuilder<PrefsState>(
-                  stream: prefsBloc.currentPrefs,
-                  builder: (context, snapshot) {
-                    if (snapshot.data?.showWebView == true) {
-                      return Container(
+                prefs.showWebView
+                    ? Container(
                         height: 200,
                         child: WebView(
-                          javaScriptMode: JavaScriptMode.unrestricted,
+                          javascriptMode: JavascriptMode.unrestricted,
                           initialUrl: article.url,
                           gestureRecognizers: Set()
                             ..add(Factory<VerticalDragGestureRecognizer>(
                                 () => VerticalDragGestureRecognizer())),
                         ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -208,7 +203,7 @@ class HackerNewsWebPage extends StatelessWidget {
       ),
       body: WebView(
         initialUrl: url,
-        javaScriptMode: JavaScriptMode.unrestricted,
+        javascriptMode: JavascriptMode.unrestricted,
       ),
     );
   }
@@ -227,7 +222,7 @@ class HackerNewsCommentPage extends StatelessWidget {
       ),
       body: WebView(
         initialUrl: 'https://news.ycombinator.com/item?id=$id',
-        javaScriptMode: JavaScriptMode.unrestricted,
+        javascriptMode: JavascriptMode.unrestricted,
       ),
     );
   }
