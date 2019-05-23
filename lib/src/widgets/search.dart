@@ -4,7 +4,7 @@ import 'package:hn_app/src/article.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ArticleSearch extends SearchDelegate<Article> {
-  final Stream<UnmodifiableListView<Article>> articles;
+  final UnmodifiableListView<Article> articles;
 
   ArticleSearch(this.articles);
 

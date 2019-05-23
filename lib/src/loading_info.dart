@@ -1,11 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hn_app/src/hn_bloc.dart';
+import 'package:provider/provider.dart';
 
 class LoadingInfo extends StatefulWidget {
-  final Stream<bool> _isLoading;
-
-  LoadingInfo(this._isLoading);
-
   createState() => LoadingInfoState();
 }
 
@@ -22,17 +20,17 @@ class LoadingInfoState extends State<LoadingInfo>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: widget._isLoading,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          _controller.forward().then((_) {
-            _controller.reverse();
-          });
-          return FadeTransition(
-            child: Icon(FontAwesomeIcons.hackerNewsSquare),
-            opacity: Tween(begin: .5, end: 1.0).animate(
-                CurvedAnimation(curve: Curves.easeIn, parent: _controller)),
-          );
+    return Consumer<HackerNewsNotifier>(
+      builder: (context, bloc, child) {
+        _controller.forward().then((_) {
+          _controller.reverse();
         });
+        return FadeTransition(
+          child: Icon(FontAwesomeIcons.hackerNewsSquare),
+          opacity: Tween(begin: .5, end: 1.0).animate(
+              CurvedAnimation(curve: Curves.easeIn, parent: _controller)),
+        );
+      },
+    );
   }
 }

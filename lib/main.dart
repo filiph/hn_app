@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,29 +6,23 @@ import 'package:hn_app/src/hn_bloc.dart';
 import 'package:hn_app/src/loading_info.dart';
 import 'package:hn_app/src/prefs_bloc.dart';
 import 'package:hn_app/src/widgets/headline.dart';
-import 'package:hn_app/src/widgets/search.dart';
+import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
-  var hnBloc = HackerNewsBloc();
-  var prefsBloc = PrefsBloc();
-
-  runApp(MyApp(
-    hackerNewsBloc: hnBloc,
-    prefsBloc: prefsBloc,
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ValueListenableProvider(builder: (_) => ValueNotifier(true)),
+        ChangeNotifierProvider(builder: (_) => HackerNewsNotifier()),
+        Provider(builder: (_) => PrefsBloc()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  final HackerNewsBloc hackerNewsBloc;
-  final PrefsBloc prefsBloc;
-
-  MyApp({
-    Key key,
-    this.hackerNewsBloc,
-    this.prefsBloc,
-  }) : super(key: key);
-
   static const primaryColor = Colors.white;
 
   @override
@@ -44,24 +36,12 @@ class MyApp extends StatelessWidget {
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
               subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
-      home: MyHomePage(
-        hackerNewsBloc: hackerNewsBloc,
-        prefsBloc: prefsBloc,
-      ),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  final HackerNewsBloc hackerNewsBloc;
-  final PrefsBloc prefsBloc;
-
-  MyHomePage({
-    Key key,
-    this.hackerNewsBloc,
-    this.prefsBloc,
-  }) : super(key: key);
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -77,42 +57,44 @@ class _MyHomePageState extends State<MyHomePage> {
           text: _currentIndex == 0 ? 'Top Stories' : 'New Stories',
           index: _currentIndex,
         ),
-        leading: LoadingInfo(widget.hackerNewsBloc.isLoading),
+        leading: LoadingInfo(),
         elevation: 0.0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () async {
-              var result = await showSearch(
-                context: context,
-                delegate: ArticleSearch(_currentIndex == 0
-                    ? widget.hackerNewsBloc.topArticles
-                    : widget.hackerNewsBloc.newArticles),
-              );
-              if (result != null) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HackerNewsWebPage(result.url)));
-              }
-            },
-          ),
-        ],
+//        actions: [
+//          IconButton(
+//            icon: Icon(Icons.search),
+//            onPressed: () async {
+//              var result = await showSearch(
+//                context: context,
+//                delegate: ArticleSearch(_currentIndex == 0
+//                    ? Provider.of<HackerNewsNotifier>(context).topArticles
+//                    : Provider.of<HackerNewsNotifier>(context).newArticles),
+//              );
+//              if (result != null) {
+//                Navigator.push(
+//                    context,
+//                    MaterialPageRoute(
+//                        builder: (context) => HackerNewsWebPage(result.url)));
+//              }
+//            },
+//          ),
+//        ],
       ),
-      body: StreamBuilder<UnmodifiableListView<Article>>(
-        stream: _currentIndex == 0
-            ? widget.hackerNewsBloc.topArticles
-            : widget.hackerNewsBloc.newArticles,
-        initialData: UnmodifiableListView<Article>([]),
-        builder: (context, snapshot) => ListView(
+      body: Consumer<HackerNewsNotifier>(
+        builder: (context, bloc, child) => ListView(
               key: PageStorageKey(_currentIndex),
-              children: snapshot.data
+              children: bloc.articles
                   .map((a) => _Item(
                         article: a,
-                        prefsBloc: widget.prefsBloc,
+                        prefsBloc: Provider.of<PrefsBloc>(context),
                       ))
                   .toList(),
             ),
+      ),
+      floatingActionButton: Consumer<bool>(
+        builder: (context, isLoading, child) => FloatingActionButton(
+            onPressed: () {},
+            child: Icon(Icons.shop,
+                color: isLoading ? Colors.yellowAccent : Colors.green)),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -128,10 +110,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         onTap: (index) {
           if (index == 0) {
-            widget.hackerNewsBloc.storiesType.add(StoriesType.topStories);
+            Provider.of<HackerNewsNotifier>(context)
+                .getStoriesByType(StoriesType.topStories);
           } else {
             assert(index == 1);
-            widget.hackerNewsBloc.storiesType.add(StoriesType.newStories);
+            Provider.of<HackerNewsNotifier>(context)
+                .getStoriesByType(StoriesType.newStories);
           }
           setState(() {
             _currentIndex = index;
@@ -248,7 +232,7 @@ class HackerNewsCommentPage extends StatelessWidget {
         title: Text('Comments'),
       ),
       body: WebView(
-        initialUrl: 'https://news.ycombinator.com/item?id=${id}',
+        initialUrl: 'https://news.ycombinator.com/item?id=$id',
         javaScriptMode: JavaScriptMode.unrestricted,
       ),
     );

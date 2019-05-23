@@ -4,7 +4,7 @@ description: A new Flutter application.
 version: 0.0.2+2
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0-dev.0.5.flutter-a1668566e5 <3.0.0"
 
 dependencies:
   url_launcher: any
@@ -19,6 +19,8 @@ dependencies:
   font_awesome_flutter: ^8.0.0
 
   webview_flutter: ^0.1.2
+
+  provider: ^2.0.1
 
   flutter:
     sdk: flutter
