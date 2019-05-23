@@ -8,4 +8,4 @@ test_task:
     folder: ~/.pub-cache
   analyze_script: flutter analyze
   test_script: flutter test
-  format_script: flutter format --dry-run --set-exit-if-changed
+  format_script: flutter format --dry-run --set-exit-if-changed .
