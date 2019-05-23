@@ -6,6 +6,7 @@ import 'package:hn_app/src/hn_bloc.dart';
 import 'package:hn_app/src/loading_info.dart';
 import 'package:hn_app/src/prefs_bloc.dart';
 import 'package:hn_app/src/widgets/headline.dart';
+import 'package:hn_app/src/widgets/search.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -13,7 +14,6 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ValueListenableProvider(builder: (_) => ValueNotifier(true)),
         ChangeNotifierProvider(builder: (_) => HackerNewsNotifier()),
         Provider(builder: (_) => PrefsBloc()),
       ],
@@ -59,25 +59,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         leading: LoadingInfo(),
         elevation: 0.0,
-//        actions: [
-//          IconButton(
-//            icon: Icon(Icons.search),
-//            onPressed: () async {
-//              var result = await showSearch(
-//                context: context,
-//                delegate: ArticleSearch(_currentIndex == 0
-//                    ? Provider.of<HackerNewsNotifier>(context).topArticles
-//                    : Provider.of<HackerNewsNotifier>(context).newArticles),
-//              );
-//              if (result != null) {
-//                Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                        builder: (context) => HackerNewsWebPage(result.url)));
-//              }
-//            },
-//          ),
-//        ],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              var result = await showSearch(
+                context: context,
+                delegate: ArticleSearch(_currentIndex == 0
+                    ? Provider.of<HackerNewsNotifier>(context).topArticles
+                    : Provider.of<HackerNewsNotifier>(context).newArticles),
+              );
+              if (result != null) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HackerNewsWebPage(result.url)));
+              }
+            },
+          ),
+        ],
       ),
       body: Consumer<HackerNewsNotifier>(
         builder: (context, bloc, child) => ListView(
@@ -89,12 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ))
                   .toList(),
             ),
-      ),
-      floatingActionButton: Consumer<bool>(
-        builder: (context, isLoading, child) => FloatingActionButton(
-            onPressed: () {},
-            child: Icon(Icons.shop,
-                color: isLoading ? Colors.yellowAccent : Colors.green)),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

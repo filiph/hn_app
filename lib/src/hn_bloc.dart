@@ -79,12 +79,6 @@ class HackerNewsNotifier with ChangeNotifier {
     return parseTopStories(response.body).take(10).toList();
   }
 
-  Future<void> _initializeArticles() async {
-    final ids = await _getIds(StoriesType.topStories);
-    _topArticles = _articles = await _updateArticles(ids);
-    notifyListeners();
-  }
-
   Future<List<Article>> _updateArticles(List<int> articleIds) async {
     var futureArticles = articleIds.map((id) => _getArticle(id));
     var all = await Future.wait(futureArticles);
