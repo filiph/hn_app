@@ -63,8 +63,7 @@ class GhostFadeTween extends Tween<Color> {
 
 @visibleForTesting
 class SwitchStringTween extends Tween<String> {
-  SwitchStringTween({String begin, String end})
-      : super(begin: begin, end: end);
+  SwitchStringTween({String begin, String end}) : super(begin: begin, end: end);
 
   String lerp(double t) {
     if (t < 0.5) return begin;

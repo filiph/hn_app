@@ -68,7 +68,6 @@ List<int> parseTopStories(String jsonStr) {
 
 Article parseArticle(String jsonStr) {
   var parsed = json.jsonDecode(jsonStr);
-  var article =
-      standardSerializers.deserializeWith(Article.serializer, parsed);
+  var article = standardSerializers.deserializeWith(Article.serializer, parsed);
   return article;
 }

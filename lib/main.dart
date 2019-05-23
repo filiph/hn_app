@@ -170,12 +170,12 @@ class _Item extends StatelessWidget {
                   children: <Widget>[
                     FlatButton(
                       onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                            HackerNewsCommentPage(article.id),
-                        ),
-                      ),
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  HackerNewsCommentPage(article.id),
+                            ),
+                          ),
                       child: Text('${article.descendants} comments'),
                     ),
                     SizedBox(width: 16.0),

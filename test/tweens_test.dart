@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:hn_app/src/widgets/headline.dart';
 import 'package:test/test.dart';
