@@ -6,6 +6,6 @@ test_task:
     CIRRUS_CLONE_DEPTH: 3
   pub_cache:
     folder: ~/.pub-cache
-  analyze_script: flutter analyze
-  test_script: flutter test
-  format_script: flutter format --dry-run --set-exit-if-changed .
+  flutter_analyze_script: flutter analyze
+  flutter_test_script: flutter test
+  flutter_format_script: flutter format --dry-run --set-exit-if-changed .
