@@ -15,6 +15,7 @@ class HackerNewsApiError extends Error {
   HackerNewsApiError(this.message);
 }
 
+/// The number of tabs that are currently loading.
 class LoadingTabsCount extends ValueNotifier<int> {
   LoadingTabsCount() : super(0);
 }
@@ -40,7 +41,7 @@ class HackerNewsNotifier with ChangeNotifier {
       ),
     ];
 
-    _tabs.first.refresh();
+    scheduleMicrotask(() => _tabs.first.refresh());
   }
 
   /// Articles from all tabs. De-duplicated.
