@@ -14,7 +14,17 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(builder: (_) => HackerNewsNotifier()),
+        Provider<LoadingTabsCount>(
+          builder: (_) => LoadingTabsCount(),
+          dispose: (_, value) => value.dispose(),
+        ),
+        ChangeNotifierProvider(
+          builder: (context) => HackerNewsNotifier(
+                // TODO(filiph): revisit when ProxyProvider lands
+                // https://github.com/rrousselGit/provider/issues/46
+                Provider.of<LoadingTabsCount>(context, listen: false),
+              ),
+        ),
         ChangeNotifierProvider(builder: (_) => PrefsNotifier()),
       ],
       child: MyApp(),
@@ -48,16 +58,45 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
+  final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    _pageController.addListener(_handlePageChange);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_handlePageChange);
+    super.dispose();
+  }
+
+  void _handlePageChange() {
+    setState(() {
+      _currentIndex = _pageController.page.round();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final hn = Provider.of<HackerNewsNotifier>(context);
+    final tabs = hn.tabs;
+    final current = tabs[_currentIndex];
+
+    if (current.articles.isEmpty && !current.isLoading) {
+      // New tab with no data. Let's fetch some.
+      current.refresh();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Headline(
-          text: _currentIndex == 0 ? 'Top Stories' : 'New Stories',
+          text: tabs[_currentIndex].name,
           index: _currentIndex,
         ),
-        leading: LoadingInfo(),
+        leading: Consumer<LoadingTabsCount>(
+            builder: (context, loading, child) => LoadingInfo(loading)),
         elevation: 0.0,
         actions: [
           IconButton(
@@ -65,9 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () async {
               var result = await showSearch(
                 context: context,
-                delegate: ArticleSearch(_currentIndex == 0
-                    ? Provider.of<HackerNewsNotifier>(context).topArticles
-                    : Provider.of<HackerNewsNotifier>(context).newArticles),
+                delegate: ArticleSearch(hn.allArticles),
               );
               if (result != null) {
                 Navigator.push(
@@ -79,38 +116,27 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Consumer<HackerNewsNotifier>(
-        builder: (context, bloc, child) => ListView(
-              key: PageStorageKey(_currentIndex),
-              children: bloc.articles
-                  .map((a) => _Item(
-                        article: a,
-                        prefsBloc: Provider.of<PrefsNotifier>(context),
-                      ))
-                  .toList(),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: tabs.length,
+        itemBuilder: (context, index) => ChangeNotifierProvider.value(
+              notifier: tabs[index],
+              child: _TabPage(index),
             ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: [
-          BottomNavigationBarItem(
-            title: Text('Top Stories'),
-            icon: Icon(Icons.arrow_drop_up),
-          ),
-          BottomNavigationBarItem(
-            title: Text('New Stories'),
-            icon: Icon(Icons.new_releases),
-          ),
+          for (final tab in tabs)
+            BottomNavigationBarItem(
+              title: Text(tab.name),
+              icon: Icon(tab.icon),
+            )
         ],
         onTap: (index) {
-          if (index == 0) {
-            Provider.of<HackerNewsNotifier>(context)
-                .getStoriesByType(StoriesType.topStories);
-          } else {
-            assert(index == 1);
-            Provider.of<HackerNewsNotifier>(context)
-                .getStoriesByType(StoriesType.newStories);
-          }
+          _pageController.animateToPage(index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic);
           setState(() {
             _currentIndex = index;
           });
@@ -122,12 +148,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class _Item extends StatelessWidget {
   final Article article;
-  final PrefsNotifier prefsBloc;
+  final PrefsNotifier prefs;
 
   const _Item({
     Key key,
     @required this.article,
-    @required this.prefsBloc,
+    @required this.prefs,
   }) : super(key: key);
 
   @override
@@ -184,6 +210,41 @@ class _Item extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TabPage extends StatelessWidget {
+  final int index;
+
+  _TabPage(this.index, {Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final tab = Provider.of<HackerNewsTab>(context);
+    final articles = tab.articles;
+    final prefs = Provider.of<PrefsNotifier>(context);
+
+    if (tab.isLoading && articles.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    return RefreshIndicator(
+      color: Colors.white,
+      backgroundColor: Colors.black,
+      onRefresh: () => tab.refresh(),
+      child: ListView(
+        key: PageStorageKey(index),
+        children: [
+          for (final article in articles)
+            _Item(
+              article: article,
+              prefs: prefs,
+            )
         ],
       ),
     );

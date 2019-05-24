@@ -2,8 +2,12 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:http/http.dart' as http;
+
+/// A global cache of articles.
+Map<int, Article> _cachedArticles = {};
 
 class HackerNewsApiError extends Error {
   final String message;
@@ -11,49 +15,71 @@ class HackerNewsApiError extends Error {
   HackerNewsApiError(this.message);
 }
 
+class LoadingTabsCount extends ValueNotifier<int> {
+  LoadingTabsCount() : super(0);
+}
+
+/// This class encapsulates the app's communication with the Hacker News API
+/// and which articles are fetched in which [tabs].
 class HackerNewsNotifier with ChangeNotifier {
+  List<HackerNewsTab> _tabs;
+
+  HackerNewsNotifier(LoadingTabsCount loading) {
+    _tabs = [
+      HackerNewsTab(
+        StoriesType.topStories,
+        'Top Stories',
+        Icons.arrow_drop_up,
+        loading,
+      ),
+      HackerNewsTab(
+        StoriesType.newStories,
+        'New Stories',
+        Icons.new_releases,
+        loading,
+      ),
+    ];
+
+    _tabs.first.refresh();
+  }
+
+  /// Articles from all tabs. De-duplicated.
+  UnmodifiableListView<Article> get allArticles => UnmodifiableListView(
+      _tabs.expand((tab) => tab.articles).toSet().toList(growable: false));
+
+  UnmodifiableListView<HackerNewsTab> get tabs => UnmodifiableListView(_tabs);
+}
+
+class HackerNewsTab with ChangeNotifier {
   static const _baseUrl = 'https://hacker-news.firebaseio.com/v0/';
-  Map<int, Article> _cachedArticles;
+
+  final StoriesType storiesType;
+
+  final String name;
+
+  List<Article> _articles = [];
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  List<Article> _topArticles = [];
-  UnmodifiableListView<Article> get topArticles =>
-      UnmodifiableListView(_topArticles);
+  final IconData icon;
 
-  List<Article> _newArticles = [];
-  UnmodifiableListView<Article> get newArticles =>
-      UnmodifiableListView(_newArticles);
+  final LoadingTabsCount loadingTabsCount;
 
-  List<Article> _articles = [];
+  HackerNewsTab(this.storiesType, this.name, this.icon, this.loadingTabsCount);
+
   UnmodifiableListView<Article> get articles => UnmodifiableListView(_articles);
 
-  StoriesType _storiesType;
-  StoriesType get storiesType => _storiesType;
-
-  HackerNewsNotifier() : _cachedArticles = Map() {
-    getStoriesByType(StoriesType.topStories);
-  }
-
-  Future<void> getStoriesByType(StoriesType type) async {
+  Future<void> refresh() async {
     _isLoading = true;
     notifyListeners();
+    loadingTabsCount.value += 1;
 
-    final ids = await _getIds(type);
+    final ids = await _getIds(storiesType);
     _articles = await _updateArticles(ids);
-
-    switch (type) {
-      case StoriesType.topStories:
-        _topArticles = _articles;
-        break;
-      case StoriesType.newStories:
-        _newArticles = _articles;
-        break;
-    }
-
     _isLoading = false;
     notifyListeners();
+    loadingTabsCount.value -= 1;
   }
 
   Future<Article> _getArticle(int id) async {
