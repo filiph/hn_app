@@ -84,7 +84,7 @@ packages:
       name: built_collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
+    version: "4.2.2"
   built_value:
     dependency: "direct main"
     description:
@@ -213,7 +213,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.3+17"
+    version: "0.12.0+2"
   http_multi_server:
     dependency: transitive
     description:
@@ -368,13 +368,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
-  rxdart:
-    dependency: "direct main"
-    description:
-      name: rxdart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.18.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -554,7 +547,7 @@ packages:
       name: webview_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.2"
+    version: "0.3.7+1"
   yaml:
     dependency: transitive
     description:

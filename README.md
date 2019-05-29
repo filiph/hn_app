@@ -1,4 +1,4 @@
-# hn_app
+# hn_app [![Build Status](https://api.cirrus-ci.com/github/filiph/hn_app.svg)](https://cirrus-ci.com/github/filiph/hn_app)
 
 A HackerNews reader app in Flutter.
 

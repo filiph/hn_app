@@ -1,0 +1,11 @@
+container:
+  image: cirrusci/flutter:latest
+
+test_task:
+  env:
+    CIRRUS_CLONE_DEPTH: 3
+  pub_cache:
+    folder: ~/.pub-cache
+  flutter_analyze_script: flutter analyze
+  flutter_test_script: flutter test
+  flutter_format_script: flutter format --dry-run --set-exit-if-changed .
