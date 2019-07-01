@@ -291,6 +291,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.6+2"
+  moor:
+    dependency: transitive
+    description:
+      name: moor
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0+1"
+  moor_flutter:
+    dependency: "direct main"
+    description:
+      name: moor_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0"
+  moor_generator:
+    dependency: "direct dev"
+    description:
+      name: moor_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.0"
   multi_server_socket:
     dependency: transitive
     description:
@@ -368,6 +389,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  recase:
+    dependency: transitive
+    description:
+      name: recase
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -436,6 +464,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.5"
+  sqflite:
+    dependency: transitive
+    description:
+      name: sqflite
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.5"
   stack_trace:
     dependency: transitive
     description:
@@ -464,6 +499,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0+1"
   term_glyph:
     dependency: transitive
     description:
@@ -557,4 +599,4 @@ packages:
     version: "2.1.15"
 sdks:
   dart: ">=2.3.0-dev.0.5.flutter-a1668566e5 <3.0.0"
-  flutter: ">=0.11.9 <2.0.0"
+  flutter: ">=1.2.1 <2.0.0"
