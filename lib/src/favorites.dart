@@ -44,8 +44,10 @@ class MyDatabase extends _$MyDatabase {
   // emit new items whenever the underlying data changes.
   Stream<bool> isFavorite(int id) {
     // TODO: is there a count for Moor ? MOAR APIS?!
-    return (select(favorites)..where((favorite) => favorite.id.equals(id)))
-        .watch()
-        .map((favoritesList) => favoritesList.length >= 1);
+    return select(favorites).watch().map((favoritesList) =>
+        favoritesList.where((favorite) => favorite.id == id).length >= 1);
+    // return (select(favorites)..where((favorite) => favorite.id.equals(id)))
+    //    .watch()
+    //    .map((favoritesList) => favoritesList.length >= 1);
   }
 }

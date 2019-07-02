@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -87,10 +88,8 @@ class HackerNewsTab with ChangeNotifier {
     if (!_cachedArticles.containsKey(id)) {
       var storyUrl = '${_baseUrl}item/$id.json';
       var storyRes = await http.get(storyUrl);
-      if (storyRes.statusCode == 200) {
+      if (storyRes.statusCode == 200 && storyRes.body != null) {
         _cachedArticles[id] = parseArticle(storyRes.body);
-      } else {
-        throw HackerNewsApiError("Article $id couldn't be fetched.");
       }
     }
     return _cachedArticles[id];
@@ -99,15 +98,25 @@ class HackerNewsTab with ChangeNotifier {
   Future<List<int>> _getIds(StoriesType type) async {
     var partUrl = type == StoriesType.topStories ? 'top' : 'new';
     var url = '$_baseUrl${partUrl}stories.json';
-    var response = await http.get(url);
+    var error =
+        () => throw HackerNewsApiError("Stories $type couldn't be fetched.");
+
+    var response;
+    try {
+      response = await http.get(url);
+    } on SocketException {
+      error();
+    }
     if (response.statusCode != 200) {
-      throw HackerNewsApiError("Stories $type couldn't be fetched.");
+      error();
     }
     return parseTopStories(response.body).take(10).toList();
   }
 
   Future<List<Article>> _updateArticles(List<int> articleIds) async {
-    var futureArticles = articleIds.map((id) => _getArticle(id));
+    var futureArticles = articleIds
+        .map((id) => _getArticle(id))
+        .where((article) => article != null);
     var all = await Future.wait(futureArticles);
     var filtered = all.where((a) => a.title != null).toList();
     return filtered;

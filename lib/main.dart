@@ -97,8 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
           text: tabs[_currentIndex].name,
           index: _currentIndex,
         ),
-        leading: Consumer<LoadingTabsCount>(
-            builder: (context, loading, child) => LoadingInfo(loading)),
+        // leading: Consumer<LoadingTabsCount>(
+        //     builder: (context, loading, child) => LoadingInfo(loading)),
         elevation: 0.0,
         actions: [
           IconButton(
@@ -117,6 +117,25 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
+        // TODO: loading value -- why is it never not 1?
+        // TODO: Make an iconButton that opens a drawer because
+        // Scaffold hard-codes the drawer behavior.
+        // TODO: Make a favorites page.
+        leading: Consumer<LoadingTabsCount>(builder: (context, loading, child) {
+          bool isLoading = loading.value > 0;
+          print(loading.value);
+          //return LoadingInfo(loading);
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            child: isLoading
+                ? LoadingInfo(loading)
+                : Drawer(
+                    child: Container(
+                        color: Colors.white,
+                        height: 300,
+                        child: Text('favorites page'))),
+          );
+        }),
       ),
       body: PageView.builder(
         controller: _pageController,
@@ -157,34 +176,30 @@ class _Item extends StatelessWidget {
     @required this.article,
     @required this.prefs,
   }) : super(key: key);
-  printEverything(BuildContext context) async {
-    print(await Provider.of<MyDatabase>(context).allFavorites);
-  }
 
   @override
   Widget build(BuildContext context) {
     final prefs = Provider.of<PrefsNotifier>(context);
     var myDatabase = Provider.of<MyDatabase>(context);
-    printEverything(context);
     assert(article.title != null);
     return Padding(
       key: PageStorageKey(article.title),
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12.0),
       child: Column(
         children: <Widget>[
-          StreamBuilder<bool>(
-              stream: myDatabase.isFavorite(article.id),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data) {
-                  return IconButton(
-                      icon: Icon(Icons.star),
-                      onPressed: () => myDatabase.removeFavorite(article.id));
-                }
-                return IconButton(
-                    icon: Icon(Icons.star_border),
-                    onPressed: () => myDatabase.addFavorite(article));
-              }),
           ExpansionTile(
+            leading: StreamBuilder<bool>(
+                stream: myDatabase.isFavorite(article.id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data) {
+                    return IconButton(
+                        icon: Icon(Icons.star),
+                        onPressed: () => myDatabase.removeFavorite(article.id));
+                  }
+                  return IconButton(
+                      icon: Icon(Icons.star_border),
+                      onPressed: () => myDatabase.addFavorite(article));
+                }),
             title: Text(article.title, style: TextStyle(fontSize: 24.0)),
             children: [
               Padding(
