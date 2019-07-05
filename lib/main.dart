@@ -22,10 +22,10 @@ void main() {
         Provider<MyDatabase>(builder: (_) => MyDatabase()),
         ChangeNotifierProvider(
           builder: (context) => HackerNewsNotifier(
-                // TODO(filiph): revisit when ProxyProvider lands
-                // https://github.com/rrousselGit/provider/issues/46
-                Provider.of<LoadingTabsCount>(context, listen: false),
-              ),
+            // TODO(filiph): revisit when ProxyProvider lands
+            // https://github.com/rrousselGit/provider/issues/46
+            Provider.of<LoadingTabsCount>(context, listen: false),
+          ),
         ),
         ChangeNotifierProvider(builder: (_) => PrefsNotifier()),
       ],
@@ -124,16 +124,17 @@ class _MyHomePageState extends State<MyHomePage> {
         leading: Consumer<LoadingTabsCount>(builder: (context, loading, child) {
           bool isLoading = loading.value > 0;
           print(loading.value);
+          print("loading");
           //return LoadingInfo(loading);
           return AnimatedSwitcher(
             duration: Duration(milliseconds: 500),
             child: isLoading
                 ? LoadingInfo(loading)
                 : Drawer(
-                    child: Container(
-                        color: Colors.white,
-                        height: 300,
-                        child: Text('favorites page'))),
+                child: Container(
+                    color: Colors.white,
+                    height: 300,
+                    child: Text('favorites page'))),
           );
         }),
       ),
@@ -141,9 +142,9 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _pageController,
         itemCount: tabs.length,
         itemBuilder: (context, index) => ChangeNotifierProvider.value(
-              notifier: tabs[index],
-              child: _TabPage(index),
-            ),
+          notifier: tabs[index],
+          child: _TabPage(index),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -155,12 +156,14 @@ class _MyHomePageState extends State<MyHomePage> {
             )
         ],
         onTap: (index) {
-          _pageController.animateToPage(index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic);
-          setState(() {
-            _currentIndex = index;
-          });
+          if (_currentIndex != index) {
+            _pageController.animateToPage(index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic);
+            setState(() {
+              _currentIndex = index;
+            });
+          }
         },
       ),
     );
@@ -211,12 +214,12 @@ class _Item extends StatelessWidget {
                       children: <Widget>[
                         FlatButton(
                           onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      HackerNewsCommentPage(article.id),
-                                ),
-                              ),
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  HackerNewsCommentPage(article.id),
+                            ),
+                          ),
                           child: Text('${article.descendants} comments'),
                         ),
                         SizedBox(width: 16.0),
@@ -232,15 +235,15 @@ class _Item extends StatelessWidget {
                     ),
                     prefs.showWebView
                         ? Container(
-                            height: 200,
-                            child: WebView(
-                              javascriptMode: JavascriptMode.unrestricted,
-                              initialUrl: article.url,
-                              gestureRecognizers: Set()
-                                ..add(Factory<VerticalDragGestureRecognizer>(
-                                    () => VerticalDragGestureRecognizer())),
-                            ),
-                          )
+                      height: 200,
+                      child: WebView(
+                        javascriptMode: JavascriptMode.unrestricted,
+                        initialUrl: article.url,
+                        gestureRecognizers: Set()
+                          ..add(Factory<VerticalDragGestureRecognizer>(
+                                  () => VerticalDragGestureRecognizer())),
+                      ),
+                    )
                         : Container(),
                   ],
                 ),
@@ -260,6 +263,7 @@ class _TabPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("tab page reloading");
     final tab = Provider.of<HackerNewsTab>(context);
     final articles = tab.articles;
     final prefs = Provider.of<PrefsNotifier>(context);
