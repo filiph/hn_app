@@ -333,63 +333,93 @@ class ArticleBuilder implements Builder<Article, ArticleBuilder> {
   _$Article _$v;
 
   int _id;
+
   int get id => _$this._id;
+
   set id(int id) => _$this._id = id;
 
   bool _deleted;
+
   bool get deleted => _$this._deleted;
+
   set deleted(bool deleted) => _$this._deleted = deleted;
 
   String _type;
+
   String get type => _$this._type;
+
   set type(String type) => _$this._type = type;
 
   String _by;
+
   String get by => _$this._by;
+
   set by(String by) => _$this._by = by;
 
   int _time;
+
   int get time => _$this._time;
+
   set time(int time) => _$this._time = time;
 
   String _text;
+
   String get text => _$this._text;
+
   set text(String text) => _$this._text = text;
 
   bool _dead;
+
   bool get dead => _$this._dead;
+
   set dead(bool dead) => _$this._dead = dead;
 
   int _parent;
+
   int get parent => _$this._parent;
+
   set parent(int parent) => _$this._parent = parent;
 
   int _poll;
+
   int get poll => _$this._poll;
+
   set poll(int poll) => _$this._poll = poll;
 
   ListBuilder<int> _kids;
+
   ListBuilder<int> get kids => _$this._kids ??= new ListBuilder<int>();
+
   set kids(ListBuilder<int> kids) => _$this._kids = kids;
 
   String _url;
+
   String get url => _$this._url;
+
   set url(String url) => _$this._url = url;
 
   int _score;
+
   int get score => _$this._score;
+
   set score(int score) => _$this._score = score;
 
   String _title;
+
   String get title => _$this._title;
+
   set title(String title) => _$this._title = title;
 
   ListBuilder<int> _parts;
+
   ListBuilder<int> get parts => _$this._parts ??= new ListBuilder<int>();
+
   set parts(ListBuilder<int> parts) => _$this._parts = parts;
 
   int _descendants;
+
   int get descendants => _$this._descendants;
+
   set descendants(int descendants) => _$this._descendants = descendants;
 
   ArticleBuilder();
