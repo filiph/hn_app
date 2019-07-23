@@ -1,10 +1,10 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/efortuna/flutter
-FLUTTER_APPLICATION_PATH=/Users/efortuna/github/hn_app
-FLUTTER_TARGET=/Users/efortuna/github/hn_app/lib/main.dart
+FLUTTER_ROOT=/Users/filiph/dev/flutter
+FLUTTER_APPLICATION_PATH=/Users/filiph/dev/hn_app
+FLUTTER_TARGET=/Users/filiph/dev/hn_app/lib/main.dart
 FLUTTER_BUILD_DIR=build
 SYMROOT=${SOURCE_ROOT}/../build/ios
-FLUTTER_FRAMEWORK_DIR=/Users/efortuna/flutter/bin/cache/artifacts/engine/ios
+FLUTTER_FRAMEWORK_DIR=/Users/filiph/dev/flutter/bin/cache/artifacts/engine/ios
 FLUTTER_BUILD_NAME=0.0.2
 FLUTTER_BUILD_NUMBER=2
 TRACK_WIDGET_CREATION=true
