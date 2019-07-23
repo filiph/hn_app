@@ -80,6 +80,7 @@ class HackerNewsTab with ChangeNotifier {
     final ids = await _getIds(storiesType);
     _articles = await _updateArticles(ids);
     _isLoading = false;
+    await Future.delayed(const Duration(seconds: 1));
     notifyListeners();
     loadingTabsCount.value -= 1;
   }

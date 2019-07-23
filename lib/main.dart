@@ -15,17 +15,17 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<LoadingTabsCount>(
+        ListenableProvider<LoadingTabsCount>(
           builder: (_) => LoadingTabsCount(),
           dispose: (_, value) => value.dispose(),
         ),
         Provider<MyDatabase>(builder: (_) => MyDatabase()),
         ChangeNotifierProvider(
           builder: (context) => HackerNewsNotifier(
-                // TODO(filiph): revisit when ProxyProvider lands
-                // https://github.com/rrousselGit/provider/issues/46
-                Provider.of<LoadingTabsCount>(context, listen: false),
-              ),
+            // TODO(filiph): revisit when ProxyProvider lands
+            // https://github.com/rrousselGit/provider/issues/46
+            Provider.of<LoadingTabsCount>(context, listen: false),
+          ),
         ),
         ChangeNotifierProvider(builder: (_) => PrefsNotifier()),
       ],
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (current.articles.isEmpty && !current.isLoading) {
       // New tab with no data. Let's fetch some.
-      current.refresh();
+      Future(() => current.refresh());
     }
 
     return Scaffold(
@@ -97,8 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
           text: tabs[_currentIndex].name,
           index: _currentIndex,
         ),
-        // leading: Consumer<LoadingTabsCount>(
-        //     builder: (context, loading, child) => LoadingInfo(loading)),
         elevation: 0.0,
         actions: [
           IconButton(
@@ -117,23 +115,14 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
-        // TODO: loading value -- why is it never not 1?
         // TODO: Make an iconButton that opens a drawer because
         // Scaffold hard-codes the drawer behavior.
         // TODO: Make a favorites page.
         leading: Consumer<LoadingTabsCount>(builder: (context, loading, child) {
           bool isLoading = loading.value > 0;
-          print(loading.value);
-          //return LoadingInfo(loading);
           return AnimatedSwitcher(
             duration: Duration(milliseconds: 500),
-            child: isLoading
-                ? LoadingInfo(loading)
-                : Drawer(
-                    child: Container(
-                        color: Colors.white,
-                        height: 300,
-                        child: Text('favorites page'))),
+            child: isLoading ? LoadingInfo(loading) : Icon(Icons.menu),
           );
         }),
       ),
@@ -141,9 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _pageController,
         itemCount: tabs.length,
         itemBuilder: (context, index) => ChangeNotifierProvider.value(
-              notifier: tabs[index],
-              child: _TabPage(index),
-            ),
+          notifier: tabs[index],
+          child: _TabPage(index),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -163,6 +152,9 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
       ),
+      drawer: Drawer(
+          child: Container(
+              color: Colors.white, height: 300, child: Text('favorites page'))),
     );
   }
 }
@@ -211,12 +203,12 @@ class _Item extends StatelessWidget {
                       children: <Widget>[
                         FlatButton(
                           onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      HackerNewsCommentPage(article.id),
-                                ),
-                              ),
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  HackerNewsCommentPage(article.id),
+                            ),
+                          ),
                           child: Text('${article.descendants} comments'),
                         ),
                         SizedBox(width: 16.0),
