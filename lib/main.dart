@@ -159,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
               controller: _pageController,
               itemCount: tabs.length,
               itemBuilder: (context, index) => ChangeNotifierProvider.value(
-                notifier: tabs[index],
+                value: tabs[index],
                 child: _TabPage(index),
               ),
             ),

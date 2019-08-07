@@ -15,7 +15,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
   final String wireName = 'Article';
 
   @override
-  Iterable serialize(Serializers serializers, Article object,
+  Iterable<Object> serialize(Serializers serializers, Article object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'id',
@@ -89,12 +89,11 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
         ..add(serializers.serialize(object.descendants,
             specifiedType: const FullType(int)));
     }
-
     return result;
   }
 
   @override
-  Article deserialize(Serializers serializers, Iterable serialized,
+  Article deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new ArticleBuilder();
 
@@ -144,7 +143,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
           result.kids.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(int)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
         case 'url':
           result.url = serializers.deserialize(value,
@@ -162,7 +161,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
           result.parts.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(int)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
         case 'descendants':
           result.descendants = serializers.deserialize(value,
