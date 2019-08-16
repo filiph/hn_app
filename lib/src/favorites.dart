@@ -46,7 +46,7 @@ class MyDatabase extends _$MyDatabase {
     // TODO: is there a count for Moor ? MOAR APIS?!
     // https://github.com/simolus3/moor/issues/55#issuecomment-507808555
     return select(favorites).watch().map((favoritesList) =>
-        favoritesList.where((favorite) => favorite.id == id).length >= 1);
+        favoritesList.any((favorite) => favorite.id == id));
     // return (select(favorites)..where((favorite) => favorite.id.equals(id)))
     //    .watch()
     //    .map((favoritesList) => favoritesList.length >= 1);
