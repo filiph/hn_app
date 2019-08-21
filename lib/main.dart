@@ -5,6 +5,8 @@ import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/favorites.dart';
 import 'package:hn_app/src/notifiers/hn_api.dart';
 import 'package:hn_app/src/notifiers/prefs.dart';
+import 'package:hn_app/src/pages/favorites.dart';
+import 'package:hn_app/src/pages/settings.dart';
 import 'package:hn_app/src/widgets/headline.dart';
 import 'package:hn_app/src/widgets/loading_info.dart';
 import 'package:hn_app/src/widgets/search.dart';
@@ -15,17 +17,17 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<LoadingTabsCount>(
+        ListenableProvider<LoadingTabsCount>(
           builder: (_) => LoadingTabsCount(),
           dispose: (_, value) => value.dispose(),
         ),
         Provider<MyDatabase>(builder: (_) => MyDatabase()),
         ChangeNotifierProvider(
           builder: (context) => HackerNewsNotifier(
-                // TODO(filiph): revisit when ProxyProvider lands
-                // https://github.com/rrousselGit/provider/issues/46
-                Provider.of<LoadingTabsCount>(context, listen: false),
-              ),
+            // TODO(filiph): revisit when ProxyProvider lands
+            // https://github.com/rrousselGit/provider/issues/46
+            Provider.of<LoadingTabsCount>(context, listen: false),
+          ),
         ),
         ChangeNotifierProvider(builder: (_) => PrefsNotifier()),
       ],
@@ -48,7 +50,10 @@ class MyApp extends StatelessWidget {
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
               subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
-      home: MyHomePage(),
+      routes: {
+        '/': (context) => MyHomePage(),
+        '/settings': (context) => SettingsPage(),
+      },
     );
   }
 }
@@ -57,6 +62,12 @@ class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
+
+/// The Key of the nested Navigator in the body of [_MyHomePageState].
+///
+/// It's a GlobalKey because we need to access it from the drawer (which is
+/// outside the body).
+GlobalKey<NavigatorState> _pageNavigatorKey = GlobalKey<NavigatorState>();
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
@@ -88,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (current.articles.isEmpty && !current.isLoading) {
       // New tab with no data. Let's fetch some.
-      current.refresh();
+      Future(() => current.refresh());
     }
 
     return Scaffold(
@@ -97,8 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
           text: tabs[_currentIndex].name,
           index: _currentIndex,
         ),
-        // leading: Consumer<LoadingTabsCount>(
-        //     builder: (context, loading, child) => LoadingInfo(loading)),
         elevation: 0.0,
         actions: [
           IconButton(
@@ -117,34 +126,45 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
-        // TODO: loading value -- why is it never not 1?
-        // TODO: Make an iconButton that opens a drawer because
-        // Scaffold hard-codes the drawer behavior.
-        // TODO: Make a favorites page.
         leading: Consumer<LoadingTabsCount>(builder: (context, loading, child) {
           bool isLoading = loading.value > 0;
-          print(loading.value);
-          print("loading");
-          //return LoadingInfo(loading);
           return AnimatedSwitcher(
             duration: Duration(milliseconds: 500),
             child: isLoading
+                // TODO: make sure that LoadingInfo is rotating when shown
+                //       or, better, collapse the two alternate widgets into one
                 ? LoadingInfo(loading)
-                : Drawer(
-                    child: Container(
-                        color: Colors.white,
-                        height: 300,
-                        child: Text('favorites page'))),
+                : IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  ),
           );
         }),
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: tabs.length,
-        itemBuilder: (context, index) => ChangeNotifierProvider.value(
-              notifier: tabs[index],
-              child: _TabPage(index),
+      // A nested navigator so we can push routes in the body from the drawer.
+      body: Navigator(
+        key: _pageNavigatorKey,
+        onGenerateRoute: (settings) {
+          // TODO: use PageRouteBuilders below instead of MaterialPageRoute
+          //       and merely cross-fade the routes
+
+          if (settings.name == '/favorites') {
+            return MaterialPageRoute(
+              builder: (context) => FavoritesPage(),
+            );
+          }
+
+          return MaterialPageRoute(
+            builder: (context) => PageView.builder(
+              controller: _pageController,
+              itemCount: tabs.length,
+              itemBuilder: (context, index) => ChangeNotifierProvider.value(
+                notifier: tabs[index],
+                child: _TabPage(index),
+              ),
             ),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -165,6 +185,30 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           }
         },
+      ),
+      drawer: Drawer(
+        child: Container(
+          color: Colors.white,
+          child: ListView(
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('HN APP'),
+              ),
+              ListTile(
+                title: Text('Favorites'),
+                onTap: () {
+                  _pageNavigatorKey.currentState
+                      .pushReplacementNamed('/favorites');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Settings'),
+                onTap: () => Navigator.pushNamed(context, '/settings'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -214,12 +258,12 @@ class _Item extends StatelessWidget {
                       children: <Widget>[
                         FlatButton(
                           onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      HackerNewsCommentPage(article.id),
-                                ),
-                              ),
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  HackerNewsCommentPage(article.id),
+                            ),
+                          ),
                           child: Text('${article.descendants} comments'),
                         ),
                         SizedBox(width: 16.0),
