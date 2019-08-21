@@ -1,5 +1,5 @@
 container:
-  image: cirrusci/flutter:latest
+  image: cirrusci/flutter:stable
 
 test_task:
   env:
