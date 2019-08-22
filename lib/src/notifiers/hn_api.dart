@@ -78,9 +78,13 @@ class HackerNewsTab with ChangeNotifier {
     notifyListeners();
     loadingTabsCount.value += 1;
 
+    // TODO: use Worker here (create it, use it, dispose of it)
+    // TODO: handle exceptions (HackerNewsApiException and parsing)
     final ids = await _getIds(storiesType);
     _articles = await _updateArticles(ids);
     _isLoading = false;
+    // TODO: remove the artificial delay, or don't wait if the actual fetch
+    //       has taken enough time
     await Future.delayed(const Duration(seconds: 1));
     notifyListeners();
     loadingTabsCount.value -= 1;
@@ -89,11 +93,13 @@ class HackerNewsTab with ChangeNotifier {
   Future<Article> _getArticle(int id) async {
     if (!_cachedArticles.containsKey(id)) {
       var storyUrl = '${_baseUrl}item/$id.json';
+      // TODO: handle exceptions of http.get
       var storyRes = await http.get(storyUrl);
       if (storyRes.statusCode == 200 && storyRes.body != null) {
         try {
           _cachedArticles[id] = parseArticle(storyRes.body);
         } catch (e) {
+          // TODO: catch the right exception (parse) and throw a custom one
           print(e.runtimeType);
           rethrow;
         }
@@ -162,6 +168,7 @@ class Worker {
 
   Future<List<int>> fetchIds(String url) {
     _sendPort.send(url);
+    // TODO: deal with multiple simultaneous requests
     _ids = Completer<List<int>>();
     return _ids.future;
   }
@@ -170,6 +177,7 @@ class Worker {
     final receivePort = ReceivePort();
 
     receivePort.listen(_handleMessage);
+    // TODO: provide onError for correct exception handling in the isolate
     _isolate = await Isolate.spawn(_isolateEntry, receivePort.sendPort);
   }
 
@@ -185,6 +193,7 @@ class Worker {
 
     receivePort.listen((dynamic message) {
       assert(message is String);
+      // TODO: actually fetch and return the IDs
       sendPort.send([1, 2, 3]);
     });
 
@@ -207,5 +216,7 @@ class Worker {
       _ids = null;
       return;
     }
+
+    throw UnimplementedError("Undefined behavior for message: $message");
   }
 }
