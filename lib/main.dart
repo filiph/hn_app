@@ -310,7 +310,7 @@ class _TabPage extends StatelessWidget {
     final tab = Provider.of<HackerNewsTab>(context);
     final articles = tab.articles;
     final prefs = Provider.of<PrefsNotifier>(context);
-    
+
     if (tab.isLoading && articles.isEmpty) {
       return Center(
         child: CircularProgressIndicator(),
