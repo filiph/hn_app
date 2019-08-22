@@ -307,11 +307,9 @@ class _TabPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("tab page reloading");
     final tab = Provider.of<HackerNewsTab>(context);
     final articles = tab.articles;
     final prefs = Provider.of<PrefsNotifier>(context);
-
     if (tab.isLoading && articles.isEmpty) {
       return Center(
         child: CircularProgressIndicator(),
