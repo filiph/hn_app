@@ -60,7 +60,7 @@ abstract class Article implements Built<Article, ArticleBuilder> {
   factory Article([updates(ArticleBuilder b)]) = _$Article;
 }
 
-List<int> parseTopStories(String jsonStr) {
+List<int> parseStoryIds(String jsonStr) {
   var parsed = json.jsonDecode(jsonStr);
   var listOfIds = List<int>.from(parsed);
   return listOfIds;

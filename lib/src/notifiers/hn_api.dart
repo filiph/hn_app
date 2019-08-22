@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +91,14 @@ class HackerNewsTab with ChangeNotifier {
       var storyUrl = '${_baseUrl}item/$id.json';
       var storyRes = await http.get(storyUrl);
       if (storyRes.statusCode == 200 && storyRes.body != null) {
-        _cachedArticles[id] = parseArticle(storyRes.body);
+        try {
+          _cachedArticles[id] = parseArticle(storyRes.body);
+        } catch (e) {
+          print(e.runtimeType);
+          rethrow;
+        }
+      } else {
+        throw HackerNewsApiException(storyRes.statusCode);
       }
     }
     return _cachedArticles[id];
@@ -111,7 +119,10 @@ class HackerNewsTab with ChangeNotifier {
     if (response.statusCode != 200) {
       error();
     }
-    return parseTopStories(response.body).take(10).toList();
+
+    var result = parseStoryIds(response.body);
+
+    return result.take(10).toList();
   }
 
   Future<List<Article>> _updateArticles(List<int> articleIds) async {
@@ -127,4 +138,74 @@ class HackerNewsTab with ChangeNotifier {
 enum StoriesType {
   topStories,
   newStories,
+}
+
+class HackerNewsApiException implements Exception {
+  final int statusCode;
+  final int message;
+
+  const HackerNewsApiException(this.statusCode, [this.message]);
+}
+
+class Worker {
+  SendPort _sendPort;
+
+  Isolate _isolate;
+
+  Completer<List<int>> _ids;
+
+  final _isolateReady = Completer<void>();
+
+  Worker() {
+    init();
+  }
+
+  Future<List<int>> fetchIds(String url) {
+    _sendPort.send(url);
+    _ids = Completer<List<int>>();
+    return _ids.future;
+  }
+
+  Future<void> init() async {
+    final receivePort = ReceivePort();
+
+    receivePort.listen(_handleMessage);
+    _isolate = await Isolate.spawn(_isolateEntry, receivePort.sendPort);
+  }
+
+  Future<void> get isReady => _isolateReady.future;
+
+  void dispose() {
+    _isolate.kill();
+  }
+
+  static void _isolateEntry(dynamic message) {
+    SendPort sendPort;
+    final receivePort = ReceivePort();
+
+    receivePort.listen((dynamic message) {
+      assert(message is String);
+      sendPort.send([1, 2, 3]);
+    });
+
+    if (message is SendPort) {
+      sendPort = message;
+      sendPort.send(receivePort.sendPort);
+      return;
+    }
+  }
+
+  void _handleMessage(dynamic message) {
+    if (message is SendPort) {
+      _sendPort = message;
+      _isolateReady.complete();
+      return;
+    }
+
+    if (message is List<int>) {
+      _ids?.complete(message);
+      _ids = null;
+      return;
+    }
+  }
 }
