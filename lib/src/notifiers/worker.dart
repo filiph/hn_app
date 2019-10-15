@@ -49,6 +49,11 @@ class Worker {
     });
     await Future.wait(futureArticles);
     var filtered = results.where((a) => a.title != null).toList();
+    // Re-sort the articles according to the original order in [articleIds].
+    // We need to do this because fetching the articles in parallel will
+    // result in scrambled order.
+    filtered.sort(
+        (a, b) => articleIds.indexOf(a.id).compareTo(articleIds.indexOf(b.id)));
     return filtered;
   }
 
