@@ -14,7 +14,7 @@ class Worker {
 
   Isolate _isolate;
 
-  Completer<List<int>> _ids;
+  Completer<List<Article>> _ids;
 
   final _isolateReady = Completer<void>();
 
@@ -23,11 +23,17 @@ class Worker {
   }
 
   Future<List<Article>> fetch(StoriesType type) async {
-    final ids = await _fetchIds(type);
-    return _getArticles(ids);
+    var partUrl = type == StoriesType.topStories ? 'top' : 'new';
+    var url = '$_baseUrl${partUrl}stories.json';
+
+    _sendPort.send(url);
+
+    // TODO: deal with multiple simultaneous requests
+    _ids = Completer<List<Article>>();
+    return _ids.future;
   }
 
-  Future<List<Article>> _getArticles(List<int> articleIds) async {
+  static Future<List<Article>> _getArticles(List<int> articleIds) async {
     final results = <Article>[];
 
     // We are running the fetch of each article in parallel with Future.wait.
@@ -46,7 +52,7 @@ class Worker {
     return filtered;
   }
 
-  Future<Article> _getArticle(int id) async {
+  static Future<Article> _getArticle(int id) async {
     var storyUrl = '${_baseUrl}item/$id.json';
     try {
       var storyRes = await http.get(storyUrl);
@@ -61,17 +67,6 @@ class Worker {
     } on http.ClientException {
       throw HackerNewsApiException(message: "Connection failed.");
     }
-  }
-
-  Future<List<int>> _fetchIds(StoriesType type) {
-    var partUrl = type == StoriesType.topStories ? 'top' : 'new';
-    var url = '$_baseUrl${partUrl}stories.json';
-
-    _sendPort.send(url);
-
-    // TODO: deal with multiple simultaneous requests
-    _ids = Completer<List<int>>();
-    return _ids.future;
   }
 
   Future<void> init() async {
@@ -100,7 +95,8 @@ class Worker {
     receivePort.listen((dynamic message) async {
       assert(message is String);
       final ids = await _getIds(message);
-      sendPort.send(ids);
+      final articles = await _getArticles(ids);
+      sendPort.send(articles);
     });
 
     if (message is SendPort) {
@@ -133,7 +129,7 @@ class Worker {
       return;
     }
 
-    if (message is List<int>) {
+    if (message is List<Article>) {
       _ids?.complete(message);
       _ids = null;
       return;
