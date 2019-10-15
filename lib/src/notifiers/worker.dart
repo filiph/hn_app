@@ -68,10 +68,10 @@ class Worker {
     throw UnimplementedError("Undefined behavior for message: $message");
   }
 
-  static Future<Article> _getArticle(int id) async {
+  static Future<Article> _getArticle(http.Client client, int id) async {
     var storyUrl = '${_baseUrl}item/$id.json';
     try {
-      var storyRes = await http.get(storyUrl);
+      var storyRes = await client.get(storyUrl);
       if (storyRes.statusCode == 200 && storyRes.body != null) {
         return parseArticle(storyRes.body);
       } else {
@@ -85,7 +85,8 @@ class Worker {
     }
   }
 
-  static Future<List<Article>> _getArticles(List<int> articleIds) async {
+  static Future<List<Article>> _getArticles(
+      http.Client client, List<int> articleIds) async {
     final results = <Article>[];
 
     // We are running the fetch of each article in parallel with Future.wait.
@@ -93,7 +94,7 @@ class Worker {
     // doesn't stop the whole fetch.
     var futureArticles = articleIds.map<Future<void>>((id) async {
       try {
-        var article = await _getArticle(id);
+        var article = await _getArticle(client, id);
         results.add(article);
       } on HackerNewsApiException catch (e) {
         print(e);
@@ -109,10 +110,10 @@ class Worker {
     return filtered;
   }
 
-  static Future<List<int>> _getIds(String url) async {
+  static Future<List<int>> _getIds(http.Client client, String url) async {
     http.Response response;
     try {
-      response = await http.get(url);
+      response = await client.get(url);
     } on SocketException catch (e) {
       throw HackerNewsApiError("$url couldn't be fetched: $e");
     }
@@ -131,9 +132,14 @@ class Worker {
 
     receivePort.listen((dynamic message) async {
       assert(message is String);
-      final ids = await _getIds(message);
-      final articles = await _getArticles(ids);
-      sendPort.send(articles);
+      final client = http.Client();
+      try {
+        final ids = await _getIds(client, message);
+        final articles = await _getArticles(client, ids);
+        sendPort.send(articles);
+      } finally {
+        client.close();
+      }
     });
 
     if (message is SendPort) {
