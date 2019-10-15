@@ -22,6 +22,12 @@ class Worker {
     init();
   }
 
+  Future<void> get isReady => _isolateReady.future;
+
+  void dispose() {
+    _isolate.kill();
+  }
+
   Future<List<Article>> fetch(StoriesType type) async {
     var partUrl = type == StoriesType.topStories ? 'top' : 'new';
     var url = '$_baseUrl${partUrl}stories.json';
@@ -31,6 +37,52 @@ class Worker {
     // TODO: deal with multiple simultaneous requests
     _ids = Completer<List<Article>>();
     return _ids.future;
+  }
+
+  Future<void> init() async {
+    final receivePort = ReceivePort();
+    final errorPort = ReceivePort();
+    errorPort.listen(print);
+
+    receivePort.listen(_handleMessage);
+    _isolate = await Isolate.spawn(
+      _isolateEntry,
+      receivePort.sendPort,
+      onError: errorPort.sendPort,
+    );
+  }
+
+  void _handleMessage(dynamic message) {
+    if (message is SendPort) {
+      _sendPort = message;
+      _isolateReady.complete();
+      return;
+    }
+
+    if (message is List<Article>) {
+      _ids?.complete(message);
+      _ids = null;
+      return;
+    }
+
+    throw UnimplementedError("Undefined behavior for message: $message");
+  }
+
+  static Future<Article> _getArticle(int id) async {
+    var storyUrl = '${_baseUrl}item/$id.json';
+    try {
+      var storyRes = await http.get(storyUrl);
+      if (storyRes.statusCode == 200 && storyRes.body != null) {
+        return parseArticle(storyRes.body);
+      } else {
+        throw HackerNewsApiException(statusCode: storyRes.statusCode);
+      }
+    } on DeserializationError {
+      throw HackerNewsApiException(
+          statusCode: 200, message: "Article was not parseable.");
+    } on http.ClientException {
+      throw HackerNewsApiException(message: "Connection failed.");
+    }
   }
 
   static Future<List<Article>> _getArticles(List<int> articleIds) async {
@@ -57,40 +109,20 @@ class Worker {
     return filtered;
   }
 
-  static Future<Article> _getArticle(int id) async {
-    var storyUrl = '${_baseUrl}item/$id.json';
+  static Future<List<int>> _getIds(String url) async {
+    http.Response response;
     try {
-      var storyRes = await http.get(storyUrl);
-      if (storyRes.statusCode == 200 && storyRes.body != null) {
-        return parseArticle(storyRes.body);
-      } else {
-        throw HackerNewsApiException(statusCode: storyRes.statusCode);
-      }
-    } on DeserializationError {
-      throw HackerNewsApiException(
-          statusCode: 200, message: "Article was not parseable.");
-    } on http.ClientException {
-      throw HackerNewsApiException(message: "Connection failed.");
+      response = await http.get(url);
+    } on SocketException catch (e) {
+      throw HackerNewsApiError("$url couldn't be fetched: $e");
     }
-  }
+    if (response.statusCode != 200) {
+      throw HackerNewsApiError("$url returned non-HTTP200");
+    }
 
-  Future<void> init() async {
-    final receivePort = ReceivePort();
-    final errorPort = ReceivePort();
-    errorPort.listen(print);
+    var result = parseStoryIds(response.body);
 
-    receivePort.listen(_handleMessage);
-    _isolate = await Isolate.spawn(
-      _isolateEntry,
-      receivePort.sendPort,
-      onError: errorPort.sendPort,
-    );
-  }
-
-  Future<void> get isReady => _isolateReady.future;
-
-  void dispose() {
-    _isolate.kill();
+    return result.take(10).toList();
   }
 
   static void _isolateEntry(dynamic message) {
@@ -109,37 +141,5 @@ class Worker {
       sendPort.send(receivePort.sendPort);
       return;
     }
-  }
-
-  static Future<List<int>> _getIds(String url) async {
-    http.Response response;
-    try {
-      response = await http.get(url);
-    } on SocketException catch (e) {
-      throw HackerNewsApiError("$url couldn't be fetched: $e");
-    }
-    if (response.statusCode != 200) {
-      throw HackerNewsApiError("$url returned non-HTTP200");
-    }
-
-    var result = parseStoryIds(response.body);
-
-    return result.take(10).toList();
-  }
-
-  void _handleMessage(dynamic message) {
-    if (message is SendPort) {
-      _sendPort = message;
-      _isolateReady.complete();
-      return;
-    }
-
-    if (message is List<Article>) {
-      _ids?.complete(message);
-      _ids = null;
-      return;
-    }
-
-    throw UnimplementedError("Undefined behavior for message: $message");
   }
 }
