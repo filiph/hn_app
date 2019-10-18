@@ -7,7 +7,6 @@ import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/notifiers/hn_api.dart';
 import 'package:http/http.dart' as http;
 
-@Deprecated("Use the new FetchStories task")
 class Worker {
   static const _baseUrl = 'https://hacker-news.firebaseio.com/v0/';
 

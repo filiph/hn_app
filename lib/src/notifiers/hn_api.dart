@@ -81,20 +81,15 @@ class HackerNewsTab with ChangeNotifier {
     notifyListeners();
     loadingTabsCount.value += 1;
 
-    try {
-      final refreshedArticles = await executorService.submit(
-        FetchStories(storiesType, cachedArticles: _cachedArticles),
-      );
+    final refreshedArticles = await executorService.submit(
+      FetchStories(storiesType, cachedArticles: _cachedArticles),
+    );
 
-      for (final article in refreshedArticles) {
-        _cachedArticles[article.id] = article;
-      }
-
-      _articles = refreshedArticles;
-    } on HackerNewsApiException catch (error) {
-      //TODO do something with the error
-
+    for (final article in refreshedArticles) {
+      _cachedArticles[article.id] = article;
     }
+
+    _articles = refreshedArticles;
 
     // TODO: remove the artificial delay, or don't wait if the actual fetch
     //       has taken enough time
