@@ -1,10 +1,19 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:executorservices/executorservices.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hn_app/src/article.dart';
-import 'package:hn_app/src/notifiers/worker.dart';
+import 'package:hn_app/src/notifiers/fetch_stories.dart';
+
+Map<int, Article> _cachedArticles = {};
+
+/// Executor are lazily created so if one isolate can handle all
+/// of the tasks, it's will be reused.
+final executorService = ExecutorService.newFixedExecutor(
+  StoriesType.values.length,
+);
 
 class HackerNewsApiError extends Error {
   final String message;
@@ -56,6 +65,7 @@ class HackerNewsTab with ChangeNotifier {
   List<Article> _articles = [];
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   final IconData icon;
@@ -71,13 +81,15 @@ class HackerNewsTab with ChangeNotifier {
     notifyListeners();
     loadingTabsCount.value += 1;
 
-    final worker = Worker();
-    await worker.isReady;
+    final refreshedArticles = await executorService.submit(
+      FetchStories(storiesType, cachedArticles: _cachedArticles),
+    );
 
-    _articles = await worker.fetch(storiesType);
-    _isLoading = false;
+    for (final article in refreshedArticles) {
+      _cachedArticles[article.id] = article;
+    }
 
-    worker.dispose();
+    _articles = refreshedArticles;
 
     // TODO: remove the artificial delay, or don't wait if the actual fetch
     //       has taken enough time
