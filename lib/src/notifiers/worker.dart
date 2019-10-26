@@ -115,10 +115,10 @@ class Worker {
     try {
       response = await client.get(url);
     } on SocketException catch (e) {
-      throw HackerNewsApiError("$url couldn't be fetched: $e");
+      throw HackerNewsApiException(message: "$url couldn't be fetched: $e");
     }
     if (response.statusCode != 200) {
-      throw HackerNewsApiError("$url returned non-HTTP200");
+      throw HackerNewsApiException(message: "$url returned non-HTTP200");
     }
 
     var result = parseStoryIds(response.body);

@@ -172,7 +172,7 @@ class $FavoritesTable extends Favorites
 }
 
 abstract class _$MyDatabase extends GeneratedDatabase {
-  _$MyDatabase(QueryExecutor e) : super(const SqlTypeSystem.withDefaults(), e);
+  _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.withDefaults(), e);
   $FavoritesTable _favorites;
   $FavoritesTable get favorites => _favorites ??= $FavoritesTable(this);
   @override
