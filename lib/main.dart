@@ -48,12 +48,12 @@ class MyApp extends StatelessWidget {
           brightness: Provider.of<PrefsNotifier>(context).userDarkMode
               ? Brightness.dark
               : Brightness.light,
-          canvasColor: Theme.of(context).brightness == Brightness.dark ||
-                  Provider.of<PrefsNotifier>(context).userDarkMode
+          /*canvasColor: Theme.of(context).brightness == Brightness.dark ||
+              Provider.of<PrefsNotifier>(context).userDarkMode
               ? Colors.black
-              : Colors.white,
+              : Colors.white,*/
           primaryColor: primaryColor,
-          scaffoldBackgroundColor: primaryColor,
+          //scaffoldBackgroundColor: primaryColor,
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
               subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
@@ -111,6 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).canvasColor,
+        iconTheme: IconThemeData(
+          color: Provider.of<PrefsNotifier>(context).userDarkMode == true ? Colors.white : Colors.black,
+        ),
         title: Headline(
           text: tabs[_currentIndex].name,
           index: _currentIndex,
@@ -125,10 +129,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 delegate: ArticleSearch(hn.allArticles),
               );
               if (result != null) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HackerNewsWebPage(result.url)));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HackerNewsWebPage(result.url)));
               }
             },
           ),
@@ -143,7 +145,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? LoadingInfo(loading)
                 : IconButton(
                     icon: Icon(Icons.menu),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
+                    //onPressed: () => Scaffold.of(context).openDrawer(),
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      builder: (context) => Container(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Icon(Icons.favorite),
+                              title: Text(
+                                'Favorites',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              onTap: () {
+                                _pageNavigatorKey.currentState.pushReplacementNamed('/favorites');
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.settings),
+                              title: Text(
+                                'Settings',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              onTap: () => Navigator.pushNamed(context, '/settings'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
           );
         }),
@@ -174,8 +216,9 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.black45,
         currentIndex: _currentIndex,
+        selectedItemColor: Colors.blue,
         items: [
           for (final tab in tabs)
             BottomNavigationBarItem(
@@ -185,14 +228,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         onTap: (index) {
           _pageController.animateToPage(index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic);
+              duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
           setState(() {
             _currentIndex = index;
           });
         },
       ),
-      drawer: Drawer(
+      /*drawer: Drawer(
         child: Container(
           child: ListView(
             children: <Widget>[
@@ -214,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
+      ),*/
     );
   }
 }
@@ -265,8 +307,7 @@ class _Item extends StatelessWidget {
                           onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  HackerNewsCommentPage(article.id),
+                              builder: (BuildContext context) => HackerNewsCommentPage(article.id),
                             ),
                           ),
                           child: Text('${article.descendants} comments'),
@@ -277,8 +318,7 @@ class _Item extends StatelessWidget {
                           onPressed: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      HackerNewsWebPage(article.url))),
+                                  builder: (context) => HackerNewsWebPage(article.url))),
                         )
                       ],
                     ),

@@ -9,6 +9,13 @@ class ArticleSearch extends SearchDelegate<Article> {
   ArticleSearch(this.articles);
 
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    return ThemeData(
+      primaryColor: Theme.of(context).canvasColor,
+    );
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
