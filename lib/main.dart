@@ -180,7 +180,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontSize: 20,
                                 ),
                               ),
-                              onTap: () => Navigator.pushNamed(context, '/settings'),
+                              onTap: () {
+                                Navigator.pop(context);
+                                Navigator.pushNamed(context, '/settings');
+                              },
                             ),
                           ],
                         ),
