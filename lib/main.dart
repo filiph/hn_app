@@ -46,9 +46,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       darkTheme: ThemeData.dark(),
       theme: ThemeData(
-          brightness: Provider.of<PrefsNotifier>(context).userDarkMode
-              ? Brightness.dark
-              : Brightness.light,
+          brightness:
+              Provider.of<PrefsNotifier>(context).userDarkMode ? Brightness.dark : Brightness.light,
           /*canvasColor: Theme.of(context).brightness == Brightness.dark ||
               Provider.of<PrefsNotifier>(context).userDarkMode
               ? Colors.black
@@ -114,7 +113,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
         iconTheme: IconThemeData(
-          color: Provider.of<PrefsNotifier>(context).userDarkMode == true ? Colors.white : Colors.black,
+          color: Provider.of<PrefsNotifier>(context).userDarkMode == true
+              ? Colors.white
+              : Colors.black,
         ),
         title: Headline(
           text: tabs[_currentIndex].name,
@@ -224,7 +225,8 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.black45,
+        backgroundColor:
+            Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.black45,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.blue,
         items: [

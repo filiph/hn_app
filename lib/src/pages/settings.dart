@@ -9,7 +9,9 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
         iconTheme: IconThemeData(
-          color: Provider.of<PrefsNotifier>(context).userDarkMode == true ? Colors.white : Colors.black,
+          color: Provider.of<PrefsNotifier>(context).userDarkMode == true
+              ? Colors.white
+              : Colors.black,
         ),
       ),
       body: Column(

@@ -39,17 +39,13 @@ class ArticleSearch extends SearchDelegate<Article> {
 
   @override
   Widget buildResults(BuildContext context) {
-    var results = articles
-        .where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
+    var results = articles.where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
 
     return ListView(
       children: results
           .map<ListTile>((a) => ListTile(
                 title: Text(a.title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subhead
-                        .copyWith(fontSize: 16.0)),
+                    style: Theme.of(context).textTheme.subhead.copyWith(fontSize: 16.0)),
                 leading: Icon(Icons.book),
                 onTap: () async {
                   if (await canLaunch(a.url)) {
@@ -64,8 +60,7 @@ class ArticleSearch extends SearchDelegate<Article> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final results = articles
-        .where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
+    final results = articles.where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
 
     return ListView(
       children: results
