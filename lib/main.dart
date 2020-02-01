@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:groovin_widgets/groovin_widgets.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/favorites.dart';
 import 'package:hn_app/src/notifiers/hn_api.dart';
@@ -159,6 +160,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ModalDrawerHandle(),
+                            ),
                             ListTile(
                               leading: Icon(Icons.favorite),
                               title: Text(
@@ -219,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black45,
+        backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.black45,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.blue,
         items: [
