@@ -12,7 +12,7 @@ class MenuBottomSheetContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
