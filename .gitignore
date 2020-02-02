@@ -28,6 +28,8 @@
 .pub/
 build/
 
+.flutter-plugins-dependencies
+
 # Android related
 **/android/**/gradle-wrapper.jar
 **/android/.gradle

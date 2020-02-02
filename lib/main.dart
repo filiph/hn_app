@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'file:///C:/Users/groov/Flutter_Projects/hn_app/lib/src/widgets/menu_bottom_sheet_content.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:groovin_widgets/groovin_widgets.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/favorites.dart';
 import 'package:hn_app/src/notifiers/hn_api.dart';
@@ -48,12 +48,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           brightness:
               Provider.of<PrefsNotifier>(context).userDarkMode ? Brightness.dark : Brightness.light,
-          /*canvasColor: Theme.of(context).brightness == Brightness.dark ||
-              Provider.of<PrefsNotifier>(context).userDarkMode
-              ? Colors.black
-              : Colors.white,*/
           primaryColor: primaryColor,
-          //scaffoldBackgroundColor: primaryColor,
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
               subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
@@ -131,8 +126,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 delegate: ArticleSearch(hn.allArticles),
               );
               if (result != null) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HackerNewsWebPage(result.url)));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HackerNewsWebPage(result.url),
+                  ),
+                );
               }
             },
           ),
@@ -147,7 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? LoadingInfo(loading)
                 : IconButton(
                     icon: Icon(Icons.menu),
-                    //onPressed: () => Scaffold.of(context).openDrawer(),
                     onPressed: () => showModalBottomSheet(
                       context: context,
                       shape: RoundedRectangleBorder(
@@ -156,43 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           topRight: Radius.circular(12),
                         ),
                       ),
-                      builder: (context) => Container(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ModalDrawerHandle(),
-                            ),
-                            ListTile(
-                              leading: Icon(Icons.favorite),
-                              title: Text(
-                                'Favorites',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              onTap: () {
-                                _pageNavigatorKey.currentState.pushReplacementNamed('/favorites');
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ListTile(
-                              leading: Icon(Icons.settings),
-                              title: Text(
-                                'Settings',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                                Navigator.pushNamed(context, '/settings');
-                              },
-                            ),
-                          ],
-                        ),
+                      builder: (context) => MenuBottomSheetContent(
+                        pageNavigatorKey: _pageNavigatorKey,
                       ),
                     ),
                   ),
@@ -225,8 +188,9 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor:
-            Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.black45,
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.black
+            : Colors.black45,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.blue,
         items: [
@@ -237,36 +201,16 @@ class _MyHomePageState extends State<MyHomePage> {
             )
         ],
         onTap: (index) {
-          _pageController.animateToPage(index,
-              duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
           setState(() {
             _currentIndex = index;
           });
         },
       ),
-      /*drawer: Drawer(
-        child: Container(
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                child: Text('HN APP'),
-              ),
-              ListTile(
-                title: Text('Favorites'),
-                onTap: () {
-                  _pageNavigatorKey.currentState
-                      .pushReplacementNamed('/favorites');
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Settings'),
-                onTap: () => Navigator.pushNamed(context, '/settings'),
-              ),
-            ],
-          ),
-        ),
-      ),*/
     );
   }
 }
@@ -297,14 +241,21 @@ class _Item extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data) {
                     return IconButton(
-                        icon: Icon(Icons.star),
-                        onPressed: () => myDatabase.removeFavorite(article.id));
+                      icon: Icon(Icons.star),
+                      onPressed: () => myDatabase.removeFavorite(article.id),
+                    );
                   }
                   return IconButton(
-                      icon: Icon(Icons.star_border),
-                      onPressed: () => myDatabase.addFavorite(article));
+                    icon: Icon(Icons.star_border),
+                    onPressed: () => myDatabase.addFavorite(article),
+                  );
                 }),
-            title: Text(article.title, style: TextStyle(fontSize: 24.0)),
+            title: Text(
+              article.title,
+              style: TextStyle(
+                fontSize: 24.0,
+              ),
+            ),
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -326,9 +277,11 @@ class _Item extends StatelessWidget {
                         IconButton(
                           icon: Icon(Icons.launch),
                           onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HackerNewsWebPage(article.url))),
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HackerNewsWebPage(article.url),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -340,7 +293,8 @@ class _Item extends StatelessWidget {
                               initialUrl: article.url,
                               gestureRecognizers: Set()
                                 ..add(Factory<VerticalDragGestureRecognizer>(
-                                    () => VerticalDragGestureRecognizer())),
+                                    () => VerticalDragGestureRecognizer()),
+                                ),
                             ),
                           )
                         : Container(),
