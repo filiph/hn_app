@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -57,9 +58,35 @@ class MyApp extends StatelessWidget {
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
               subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
-      routes: {
-        '/': (context) => MyHomePage(),
-        '/settings': (context) => SettingsPage(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(
+              builder: (context) => MyHomePage(),
+            );
+          case '/settings':
+            return PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return SettingsPage(animation);
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: animation.drive(
+                      Tween(begin: 1.3, end: 1.0).chain(
+                        CurveTween(curve: Curves.easeOutCubic),
+                      ),
+                    ),
+                    child: child,
+                  ),
+                );
+              },
+            );
+          default:
+            throw UnimplementedError('no route for $settings');
+        }
       },
     );
   }
