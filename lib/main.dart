@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -11,10 +13,20 @@ import 'package:hn_app/src/pages/settings.dart';
 import 'package:hn_app/src/widgets/headline.dart';
 import 'package:hn_app/src/widgets/loading_info.dart';
 import 'package:hn_app/src/widgets/search.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
+  // Set up logging to console. (In production, this might go to
+  // a rotating log, so that it can be sent to an analytics service
+  // when problems arise.)
+  Logger.root.level = Level.FINE; // Default is Level.INFO.
+  Logger.root.onRecord.listen((record) {
+    print('[${record.level.name}] ${record.loggerName} '
+        '-- ${record.time} -- ${record.message}');
+  });
+
   runApp(
     MultiProvider(
       providers: [
