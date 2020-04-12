@@ -41,7 +41,7 @@ class ArticleSearch extends SearchDelegate<Article> {
                 title: Text(a.title,
                     style: Theme.of(context)
                         .textTheme
-                        .subhead
+                        .subtitle1
                         .copyWith(fontSize: 16.0)),
                 leading: Icon(Icons.book),
                 onTap: () async {
@@ -64,7 +64,7 @@ class ArticleSearch extends SearchDelegate<Article> {
       children: results
           .map<ListTile>((a) => ListTile(
                 title: Text(a.title,
-                    style: Theme.of(context).textTheme.subhead.copyWith(
+                    style: Theme.of(context).textTheme.subtitle1.copyWith(
                           fontSize: 16.0,
                           color: Colors.blue,
                         )),

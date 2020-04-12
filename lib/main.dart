@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: primaryColor,
           textTheme: Theme.of(context).textTheme.copyWith(
               caption: TextStyle(color: Colors.white54),
-              subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
+              subtitle1: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
