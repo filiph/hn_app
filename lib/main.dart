@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:hn_app/src/favorites.dart';
 import 'package:hn_app/src/notifiers/hn_api.dart';
@@ -58,18 +59,21 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       darkTheme: ThemeData.dark(),
       theme: ThemeData(
-          brightness: Provider.of<PrefsNotifier>(context).userDarkMode
-              ? Brightness.dark
-              : Brightness.light,
-          canvasColor: Theme.of(context).brightness == Brightness.dark ||
-                  Provider.of<PrefsNotifier>(context).userDarkMode
-              ? Colors.black
-              : Colors.white,
-          primaryColor: primaryColor,
-          scaffoldBackgroundColor: primaryColor,
-          textTheme: Theme.of(context).textTheme.copyWith(
-              caption: TextStyle(color: Colors.white54),
-              subhead: TextStyle(fontFamily: 'Garamond', fontSize: 10.0))),
+        brightness: Provider.of<PrefsNotifier>(context).userDarkMode
+            ? Brightness.dark
+            : Brightness.light,
+        canvasColor: Theme.of(context).brightness == Brightness.dark ||
+                Provider.of<PrefsNotifier>(context).userDarkMode
+            ? Colors.black
+            : Colors.white,
+        primaryColor: primaryColor,
+        scaffoldBackgroundColor: primaryColor,
+        textTheme: TextTheme(
+          caption: TextStyle(color: Colors.white54),
+          button: GoogleFonts.boogaloo(fontSize: 18),
+          subtitle1: GoogleFonts.boogaloo(fontSize: 24),
+        ),
+      ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
@@ -291,7 +295,7 @@ class _Item extends StatelessWidget {
                       icon: Icon(Icons.star_border),
                       onPressed: () => myDatabase.addFavorite(article));
                 }),
-            title: Text(article.title, style: TextStyle(fontSize: 24.0)),
+            title: Text(article.title),
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -300,15 +304,18 @@ class _Item extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        FlatButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  HackerNewsCommentPage(article.id),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 46),
+                          child: FlatButton(
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    HackerNewsCommentPage(article.id),
+                              ),
                             ),
+                            child: Text('${article.descendants} comments'),
                           ),
-                          child: Text('${article.descendants} comments'),
                         ),
                         SizedBox(width: 16.0),
                         IconButton(

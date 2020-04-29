@@ -13,6 +13,8 @@ dependencies:
   built_collection: ^4.2.2
   built_value: ^6.5.0
 
+  google_fonts: ^1.0.0
+
   http: ^0.12.0+2
 
   logging: ">=0.11.4 <2.0.0"
