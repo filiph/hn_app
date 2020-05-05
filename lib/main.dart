@@ -227,12 +227,14 @@ class _MyHomePageState extends State<MyHomePage> {
             )
         ],
         onTap: (index) {
-          _pageController.animateToPage(index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic);
-          setState(() {
-            _currentIndex = index;
-          });
+          if (_currentIndex != index) {
+            _pageController.animateToPage(index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic);
+            setState(() {
+              _currentIndex = index;
+            });
+          }
         },
       ),
       drawer: Drawer(

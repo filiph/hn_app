@@ -66,6 +66,7 @@ class HackerNewsTab with ChangeNotifier {
   List<Article> _articles = [];
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   final IconData icon;

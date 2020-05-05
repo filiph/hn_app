@@ -12,7 +12,9 @@ class Favorite extends DataClass {
   final String title;
   final String url;
   final String category;
+
   Favorite({this.id, this.title, this.url, this.category});
+
   factory Favorite.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -27,6 +29,7 @@ class Favorite extends DataClass {
           .mapFromDatabaseResponse(data['${effectivePrefix}category']),
     );
   }
+
   factory Favorite.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer = const ValueSerializer.defaults()}) {
     return Favorite(
@@ -36,6 +39,7 @@ class Favorite extends DataClass {
       category: serializer.fromJson<String>(json['category']),
     );
   }
+
   @override
   Map<String, dynamic> toJson(
       {ValueSerializer serializer = const ValueSerializer.defaults()}) {
@@ -54,6 +58,7 @@ class Favorite extends DataClass {
         url: url ?? this.url,
         category: category ?? this.category,
       );
+
   @override
   String toString() {
     return (StringBuffer('Favorite(')
@@ -69,6 +74,7 @@ class Favorite extends DataClass {
   int get hashCode => $mrjf($mrjc(
       $mrjc($mrjc($mrjc(0, id.hashCode), title.hashCode), url.hashCode),
       category.hashCode));
+
   @override
   bool operator ==(other) =>
       identical(this, other) ||
@@ -83,18 +89,24 @@ class $FavoritesTable extends Favorites
     with TableInfo<$FavoritesTable, Favorite> {
   final GeneratedDatabase _db;
   final String _alias;
+
   $FavoritesTable(this._db, [this._alias]);
+
   GeneratedIntColumn _id;
+
   @override
   GeneratedIntColumn get id => _id ??= _constructId();
+
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         $customConstraints: 'UNIQUE');
   }
 
   GeneratedTextColumn _title;
+
   @override
   GeneratedTextColumn get title => _title ??= _constructTitle();
+
   GeneratedTextColumn _constructTitle() {
     return GeneratedTextColumn(
       'title',
@@ -104,8 +116,10 @@ class $FavoritesTable extends Favorites
   }
 
   GeneratedTextColumn _url;
+
   @override
   GeneratedTextColumn get url => _url ??= _constructUrl();
+
   GeneratedTextColumn _constructUrl() {
     return GeneratedTextColumn(
       'url',
@@ -115,8 +129,10 @@ class $FavoritesTable extends Favorites
   }
 
   GeneratedTextColumn _category;
+
   @override
   GeneratedTextColumn get category => _category ??= _constructCategory();
+
   GeneratedTextColumn _constructCategory() {
     return GeneratedTextColumn(
       'category',
@@ -127,20 +143,25 @@ class $FavoritesTable extends Favorites
 
   @override
   List<GeneratedColumn> get $columns => [id, title, url, category];
+
   @override
   $FavoritesTable get asDslTable => this;
+
   @override
   String get $tableName => _alias ?? 'favorites';
   @override
   final String actualTableName = 'favorites';
+
   @override
   bool validateIntegrity(Favorite instance, bool isInserting) =>
       id.isAcceptableValue(instance.id, isInserting) &&
       title.isAcceptableValue(instance.title, isInserting) &&
       url.isAcceptableValue(instance.url, isInserting) &&
       category.isAcceptableValue(instance.category, isInserting);
+
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+
   @override
   Favorite map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -174,7 +195,9 @@ class $FavoritesTable extends Favorites
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.withDefaults(), e);
   $FavoritesTable _favorites;
+
   $FavoritesTable get favorites => _favorites ??= $FavoritesTable(this);
+
   @override
   List<TableInfo> get allTables => [favorites];
 }

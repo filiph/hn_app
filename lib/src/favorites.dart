@@ -8,8 +8,11 @@ part 'favorites.g.dart';
 class Favorites extends Table {
   // article id
   IntColumn get id => integer().customConstraint('UNIQUE')();
+
   TextColumn get title => text()();
+
   TextColumn get url => text()();
+
   TextColumn get category => text().nullable()();
 }
 
