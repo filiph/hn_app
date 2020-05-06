@@ -49,8 +49,7 @@ class HeadlineState extends AnimatedWidgetBaseState<Headline> {
 
 @visibleForTesting
 class GhostFadeTween extends Tween<Color> {
-  final Color middle = Color(
-      0x00FFFFFF); //transparent white instead of white so that it works in dark mode
+  final Color middle = Colors.white;
 
   GhostFadeTween({Color begin, Color end}) : super(begin: begin, end: end);
 
