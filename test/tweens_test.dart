@@ -7,7 +7,7 @@ void main() {
     test('interpolates colors correctly', () {
       Color blue = Color.fromARGB(255, 0, 0, 255);
       Color red = Color.fromARGB(255, 255, 0, 0);
-      Color white = Color.fromARGB(255, 255, 255, 255);
+      Color white = Color.fromARGB(0, 255, 255, 255);
       GhostFadeTween tween = GhostFadeTween(
         begin: blue,
         end: red,
