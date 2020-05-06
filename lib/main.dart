@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'HN APP',
       darkTheme: ThemeData.dark(),
       theme: ThemeData(
         brightness: Provider.of<PrefsNotifier>(context).userDarkMode
@@ -64,14 +64,21 @@ class MyApp extends StatelessWidget {
             : Brightness.light,
         canvasColor: Theme.of(context).brightness == Brightness.dark ||
                 Provider.of<PrefsNotifier>(context).userDarkMode
-            ? Colors.black
+            ? Colors.grey[900]
             : Colors.white,
-        primaryColor: primaryColor,
-        scaffoldBackgroundColor: primaryColor,
+        primaryColor: Theme.of(context).brightness == Brightness.dark ||
+                Provider.of<PrefsNotifier>(context).userDarkMode
+            ? Colors.black
+            : primaryColor,
+        scaffoldBackgroundColor:
+            Theme.of(context).brightness == Brightness.dark ||
+                    Provider.of<PrefsNotifier>(context).userDarkMode
+                ? Colors.black
+                : primaryColor,
         textTheme: TextTheme(
           caption: TextStyle(color: Colors.white54),
           button: GoogleFonts.boogaloo(fontSize: 18),
-          subtitle1: GoogleFonts.boogaloo(fontSize: 24),
+          subhead: GoogleFonts.boogaloo(fontSize: 24),
         ),
       ),
       onGenerateRoute: (settings) {
