@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
             : Brightness.light,
         canvasColor: Theme.of(context).brightness == Brightness.dark ||
                 Provider.of<PrefsNotifier>(context).userDarkMode
-            ? Colors.grey[900]
+            ? Colors.black
             : Colors.white,
         primaryColor: Theme.of(context).brightness == Brightness.dark ||
                 Provider.of<PrefsNotifier>(context).userDarkMode
