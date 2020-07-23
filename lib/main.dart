@@ -136,21 +136,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handlePageChange() {
-    setState(() {
-      _currentIndex = _pageController.page.round();
-    });
+    final newIndex = _pageController.page.round();
+
+    if (_currentIndex != newIndex) {
+      setState(() {
+        _currentIndex = newIndex;
+      });
+
+      final hn = Provider.of<HackerNewsNotifier>(context);
+      final tabs = hn.tabs;
+      final current = tabs[_currentIndex];
+
+      if (current.articles.isEmpty && !current.isLoading) {
+        // New tab with no data. Let's fetch some.
+        current.refresh();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final hn = Provider.of<HackerNewsNotifier>(context);
     final tabs = hn.tabs;
-    final current = tabs[_currentIndex];
-
-    if (current.articles.isEmpty && !current.isLoading) {
-      // New tab with no data. Let's fetch some.
-      Future(() => current.refresh());
-    }
 
     return Scaffold(
       appBar: AppBar(
