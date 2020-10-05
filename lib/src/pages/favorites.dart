@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hn_app/src/favorites.dart';
 import 'package:provider/provider.dart';
+import 'package:hn_app/src/widgets/hn_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   @override
@@ -20,45 +21,49 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     var myDatabase = Provider.of<MyDatabase>(context);
 
-    // TODO: allow going back to Top Stories and New Stories.
+    // TODO: add comments to the favorites page.
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("FAVORITES"),
+      ),
+      body: StreamBuilder(
+        stream: myDatabase.allFavorites.asStream(),
+        builder: (context, AsyncSnapshot<List<Favorite>> snapshot) {
+          return Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (_, index) {
+                    if (snapshot.data == null) {
+                      return null;
+                    }
+                    Favorite article = snapshot.data[index];
 
-    // TODO: Make favorites ack like top and new stories.
-    return StreamBuilder(
-      stream: myDatabase.allFavorites.asStream(),
-      builder: (context, AsyncSnapshot<List<Favorite>> snapshot) {
-        return Column(
-          children: <Widget>[
-            Center(child: Text("FAVORITES")),
-            Expanded(
-              child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (_, index) {
-                  return ListTile(
-                    //TODO(fitza): Make this tappable to remove the favorite
-                    leading: Icon(Icons.star),
-                    title: Text(snapshot.data[index].title),
-                    onTap: () {
-                      //TODO(fitza): Load the actual article itself.
-                    },
-                  );
-                },
+                    return ListTile(
+                      leading: IconButton(
+                          icon: Icon(Icons.star),
+                          onPressed: () {
+                            myDatabase.removeFavorite(article.id);
+                            // TODO(fitza): verify that this is or isn't best practice
+                            setState(() => {});
+                          }),
+                      title: Text(snapshot.data[index].title),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    HackerNewsWebPage(article.url)));
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
-
-    // return Column(
-    //   children: <Widget>[
-    //     Center(child: Text("FAVORITES")),
-    //     Expanded(
-    //         child: ListView.builder(
-    //             itemCount: _favorites.length,
-    //             itemBuilder: (_, index) {
-    //               return ListTile(title: Text(_favorites[index].title));
-    //             })),
-    //   ],
-    // );
   }
 }

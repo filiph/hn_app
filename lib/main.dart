@@ -12,6 +12,7 @@ import 'package:hn_app/src/notifiers/prefs.dart';
 import 'package:hn_app/src/pages/favorites.dart';
 import 'package:hn_app/src/pages/settings.dart';
 import 'package:hn_app/src/widgets/headline.dart';
+import 'package:hn_app/src/widgets/hn_page.dart';
 import 'package:hn_app/src/widgets/loading_info.dart';
 import 'package:hn_app/src/widgets/search.dart';
 import 'package:logging/logging.dart';
@@ -80,6 +81,11 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => MyHomePage(),
             );
+          case '/favorites':
+            return PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) {
+              return FavoritesPage();
+            });
           case '/settings':
             return PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
@@ -242,6 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
       ),
+
       drawer: Drawer(
         child: Container(
           child: ListView(
@@ -252,9 +259,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ListTile(
                 title: Text('Favorites'),
                 onTap: () {
-                  _pageNavigatorKey.currentState
-                      .pushReplacementNamed('/favorites');
+                  // TODO Figure out why past devs wanted to do a replacement.
                   Navigator.pop(context);
+                  Navigator.pushNamed(context, '/favorites');
                 },
               ),
               ListTile(
@@ -388,25 +395,6 @@ class _TabPage extends StatelessWidget {
               prefs: prefs,
             )
         ],
-      ),
-    );
-  }
-}
-
-class HackerNewsWebPage extends StatelessWidget {
-  HackerNewsWebPage(this.url);
-
-  final String url;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Web Page'),
-      ),
-      body: WebView(
-        initialUrl: url,
-        javascriptMode: JavascriptMode.unrestricted,
       ),
     );
   }
