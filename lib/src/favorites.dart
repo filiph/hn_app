@@ -7,10 +7,10 @@ part 'favorites.g.dart';
 // be represented by a class called "Todo".
 class Favorites extends Table {
   // article id
-  IntColumn get id => integer().customConstraint('UNIQUE')();
-  TextColumn get title => text()();
-  TextColumn get url => text()();
-  TextColumn get category => text().nullable()();
+  IntColumn? get id => integer().customConstraint('UNIQUE')();
+  TextColumn? get title => text()();
+  TextColumn? get url => text()();
+  TextColumn? get category => text().nullable()();
 }
 
 // this annotation tells moor to prepare a database class that uses both of the
@@ -31,13 +31,13 @@ class MyDatabase extends _$MyDatabase {
   void addFavorite(Article article) {
     var favorite = Favorite(
         id: article.id,
-        url: article.url,
-        title: article.title,
+        url: article.url ?? '',
+        title: article.title ?? '',
         category: article.type);
     into(favorites).insert(favorite);
   }
 
-  void removeFavorite(int i) =>
+  void removeFavorite(int? i) =>
       (delete(favorites)..where((t) => t.id.equals(i))).go();
 
   // watches all todo entries in a given category. The stream will automatically

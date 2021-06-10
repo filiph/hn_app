@@ -5,19 +5,19 @@ import 'package:provider/provider.dart';
 class SettingsPage extends StatelessWidget {
   final Animation<double> initialAnimation;
 
-  const SettingsPage(this.initialAnimation, {Key key}) : super(key: key);
+  const SettingsPage(this.initialAnimation, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: initialAnimation,
-      builder: (context, value, child) {
+      builder: (context, dynamic value, child) {
         return Theme(
           data: ThemeData(
               canvasColor:
                   ColorTween(begin: Color(0x00FFFFFF), end: Colors.white)
                       .transform(value)),
-          child: child,
+          child: child!,
         );
       },
       child: Scaffold(

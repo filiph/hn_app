@@ -15,9 +15,9 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
   final String wireName = 'Article';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Article object,
+  Iterable<Object?> serialize(Serializers serializers, Article object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
+    final result = <Object?>[
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(int)),
       'type',
@@ -26,74 +26,88 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
       serializers.serialize(object.by, specifiedType: const FullType(String)),
       'time',
       serializers.serialize(object.time, specifiedType: const FullType(int)),
-      'kids',
-      serializers.serialize(object.kids,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(int)])),
-      'parts',
-      serializers.serialize(object.parts,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(int)])),
     ];
-    if (object.deleted != null) {
+    Object? value;
+    value = object.deleted;
+    if (value != null) {
       result
         ..add('deleted')
-        ..add(serializers.serialize(object.deleted,
-            specifiedType: const FullType(bool)));
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
     }
-    if (object.text != null) {
+    value = object.text;
+    if (value != null) {
       result
         ..add('text')
-        ..add(serializers.serialize(object.text,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.dead != null) {
+    value = object.dead;
+    if (value != null) {
       result
         ..add('dead')
-        ..add(serializers.serialize(object.dead,
-            specifiedType: const FullType(bool)));
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
     }
-    if (object.parent != null) {
+    value = object.parent;
+    if (value != null) {
       result
         ..add('parent')
-        ..add(serializers.serialize(object.parent,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.poll != null) {
+    value = object.poll;
+    if (value != null) {
       result
         ..add('poll')
-        ..add(serializers.serialize(object.poll,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.url != null) {
+    value = object.kids;
+    if (value != null) {
+      result
+        ..add('kids')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
+    value = object.url;
+    if (value != null) {
       result
         ..add('url')
-        ..add(serializers.serialize(object.url,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.score != null) {
+    value = object.score;
+    if (value != null) {
       result
         ..add('score')
-        ..add(serializers.serialize(object.score,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.title != null) {
+    value = object.title;
+    if (value != null) {
       result
         ..add('title')
-        ..add(serializers.serialize(object.title,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.descendants != null) {
+    value = object.parts;
+    if (value != null) {
+      result
+        ..add('parts')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(int)])));
+    }
+    value = object.descendants;
+    if (value != null) {
       result
         ..add('descendants')
-        ..add(serializers.serialize(object.descendants,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
     return result;
   }
 
   @override
-  Article deserialize(Serializers serializers, Iterable<Object> serialized,
+  Article deserialize(Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new ArticleBuilder();
 
@@ -101,7 +115,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object? value = iterator.current;
       switch (key) {
         case 'id':
           result.id = serializers.deserialize(value,
@@ -142,7 +156,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
         case 'kids':
           result.kids.replace(serializers.deserialize(value,
                   specifiedType:
-                      const FullType(BuiltList, const [const FullType(int)]))
+                      const FullType(BuiltList, const [const FullType(int)]))!
               as BuiltList<Object>);
           break;
         case 'url':
@@ -160,7 +174,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
         case 'parts':
           result.parts.replace(serializers.deserialize(value,
                   specifiedType:
-                      const FullType(BuiltList, const [const FullType(int)]))
+                      const FullType(BuiltList, const [const FullType(int)]))!
               as BuiltList<Object>);
           break;
         case 'descendants':
@@ -178,7 +192,7 @@ class _$Article extends Article {
   @override
   final int id;
   @override
-  final bool deleted;
+  final bool? deleted;
   @override
   final String type;
   @override
@@ -186,35 +200,35 @@ class _$Article extends Article {
   @override
   final int time;
   @override
-  final String text;
+  final String? text;
   @override
-  final bool dead;
+  final bool? dead;
   @override
-  final int parent;
+  final int? parent;
   @override
-  final int poll;
+  final int? poll;
   @override
-  final BuiltList<int> kids;
+  final BuiltList<int>? kids;
   @override
-  final String url;
+  final String? url;
   @override
-  final int score;
+  final int? score;
   @override
-  final String title;
+  final String? title;
   @override
-  final BuiltList<int> parts;
+  final BuiltList<int>? parts;
   @override
-  final int descendants;
+  final int? descendants;
 
-  factory _$Article([void Function(ArticleBuilder) updates]) =>
+  factory _$Article([void Function(ArticleBuilder)? updates]) =>
       (new ArticleBuilder()..update(updates)).build();
 
   _$Article._(
-      {this.id,
+      {required this.id,
       this.deleted,
-      this.type,
-      this.by,
-      this.time,
+      required this.type,
+      required this.by,
+      required this.time,
       this.text,
       this.dead,
       this.parent,
@@ -226,24 +240,10 @@ class _$Article extends Article {
       this.parts,
       this.descendants})
       : super._() {
-    if (id == null) {
-      throw new BuiltValueNullFieldError('Article', 'id');
-    }
-    if (type == null) {
-      throw new BuiltValueNullFieldError('Article', 'type');
-    }
-    if (by == null) {
-      throw new BuiltValueNullFieldError('Article', 'by');
-    }
-    if (time == null) {
-      throw new BuiltValueNullFieldError('Article', 'time');
-    }
-    if (kids == null) {
-      throw new BuiltValueNullFieldError('Article', 'kids');
-    }
-    if (parts == null) {
-      throw new BuiltValueNullFieldError('Article', 'parts');
-    }
+    BuiltValueNullFieldError.checkNotNull(id, 'Article', 'id');
+    BuiltValueNullFieldError.checkNotNull(type, 'Article', 'type');
+    BuiltValueNullFieldError.checkNotNull(by, 'Article', 'by');
+    BuiltValueNullFieldError.checkNotNull(time, 'Article', 'time');
   }
 
   @override
@@ -329,87 +329,88 @@ class _$Article extends Article {
 }
 
 class ArticleBuilder implements Builder<Article, ArticleBuilder> {
-  _$Article _$v;
+  _$Article? _$v;
 
-  int _id;
-  int get id => _$this._id;
-  set id(int id) => _$this._id = id;
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
 
-  bool _deleted;
-  bool get deleted => _$this._deleted;
-  set deleted(bool deleted) => _$this._deleted = deleted;
+  bool? _deleted;
+  bool? get deleted => _$this._deleted;
+  set deleted(bool? deleted) => _$this._deleted = deleted;
 
-  String _type;
-  String get type => _$this._type;
-  set type(String type) => _$this._type = type;
+  String? _type;
+  String? get type => _$this._type;
+  set type(String? type) => _$this._type = type;
 
-  String _by;
-  String get by => _$this._by;
-  set by(String by) => _$this._by = by;
+  String? _by;
+  String? get by => _$this._by;
+  set by(String? by) => _$this._by = by;
 
-  int _time;
-  int get time => _$this._time;
-  set time(int time) => _$this._time = time;
+  int? _time;
+  int? get time => _$this._time;
+  set time(int? time) => _$this._time = time;
 
-  String _text;
-  String get text => _$this._text;
-  set text(String text) => _$this._text = text;
+  String? _text;
+  String? get text => _$this._text;
+  set text(String? text) => _$this._text = text;
 
-  bool _dead;
-  bool get dead => _$this._dead;
-  set dead(bool dead) => _$this._dead = dead;
+  bool? _dead;
+  bool? get dead => _$this._dead;
+  set dead(bool? dead) => _$this._dead = dead;
 
-  int _parent;
-  int get parent => _$this._parent;
-  set parent(int parent) => _$this._parent = parent;
+  int? _parent;
+  int? get parent => _$this._parent;
+  set parent(int? parent) => _$this._parent = parent;
 
-  int _poll;
-  int get poll => _$this._poll;
-  set poll(int poll) => _$this._poll = poll;
+  int? _poll;
+  int? get poll => _$this._poll;
+  set poll(int? poll) => _$this._poll = poll;
 
-  ListBuilder<int> _kids;
+  ListBuilder<int>? _kids;
   ListBuilder<int> get kids => _$this._kids ??= new ListBuilder<int>();
-  set kids(ListBuilder<int> kids) => _$this._kids = kids;
+  set kids(ListBuilder<int>? kids) => _$this._kids = kids;
 
-  String _url;
-  String get url => _$this._url;
-  set url(String url) => _$this._url = url;
+  String? _url;
+  String? get url => _$this._url;
+  set url(String? url) => _$this._url = url;
 
-  int _score;
-  int get score => _$this._score;
-  set score(int score) => _$this._score = score;
+  int? _score;
+  int? get score => _$this._score;
+  set score(int? score) => _$this._score = score;
 
-  String _title;
-  String get title => _$this._title;
-  set title(String title) => _$this._title = title;
+  String? _title;
+  String? get title => _$this._title;
+  set title(String? title) => _$this._title = title;
 
-  ListBuilder<int> _parts;
+  ListBuilder<int>? _parts;
   ListBuilder<int> get parts => _$this._parts ??= new ListBuilder<int>();
-  set parts(ListBuilder<int> parts) => _$this._parts = parts;
+  set parts(ListBuilder<int>? parts) => _$this._parts = parts;
 
-  int _descendants;
-  int get descendants => _$this._descendants;
-  set descendants(int descendants) => _$this._descendants = descendants;
+  int? _descendants;
+  int? get descendants => _$this._descendants;
+  set descendants(int? descendants) => _$this._descendants = descendants;
 
   ArticleBuilder();
 
   ArticleBuilder get _$this {
-    if (_$v != null) {
-      _id = _$v.id;
-      _deleted = _$v.deleted;
-      _type = _$v.type;
-      _by = _$v.by;
-      _time = _$v.time;
-      _text = _$v.text;
-      _dead = _$v.dead;
-      _parent = _$v.parent;
-      _poll = _$v.poll;
-      _kids = _$v.kids?.toBuilder();
-      _url = _$v.url;
-      _score = _$v.score;
-      _title = _$v.title;
-      _parts = _$v.parts?.toBuilder();
-      _descendants = _$v.descendants;
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _deleted = $v.deleted;
+      _type = $v.type;
+      _by = $v.by;
+      _time = $v.time;
+      _text = $v.text;
+      _dead = $v.dead;
+      _parent = $v.parent;
+      _poll = $v.poll;
+      _kids = $v.kids?.toBuilder();
+      _url = $v.url;
+      _score = $v.score;
+      _title = $v.title;
+      _parts = $v.parts?.toBuilder();
+      _descendants = $v.descendants;
       _$v = null;
     }
     return this;
@@ -417,14 +418,12 @@ class ArticleBuilder implements Builder<Article, ArticleBuilder> {
 
   @override
   void replace(Article other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Article;
   }
 
   @override
-  void update(void Function(ArticleBuilder) updates) {
+  void update(void Function(ArticleBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
@@ -434,29 +433,31 @@ class ArticleBuilder implements Builder<Article, ArticleBuilder> {
     try {
       _$result = _$v ??
           new _$Article._(
-              id: id,
+              id: BuiltValueNullFieldError.checkNotNull(id, 'Article', 'id'),
               deleted: deleted,
-              type: type,
-              by: by,
-              time: time,
+              type: BuiltValueNullFieldError.checkNotNull(
+                  type, 'Article', 'type'),
+              by: BuiltValueNullFieldError.checkNotNull(by, 'Article', 'by'),
+              time: BuiltValueNullFieldError.checkNotNull(
+                  time, 'Article', 'time'),
               text: text,
               dead: dead,
               parent: parent,
               poll: poll,
-              kids: kids.build(),
+              kids: _kids?.build(),
               url: url,
               score: score,
               title: title,
-              parts: parts.build(),
+              parts: _parts?.build(),
               descendants: descendants);
     } catch (_) {
-      String _$failedField;
+      late String _$failedField;
       try {
         _$failedField = 'kids';
-        kids.build();
+        _kids?.build();
 
         _$failedField = 'parts';
-        parts.build();
+        _parts?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'Article', _$failedField, e.toString());

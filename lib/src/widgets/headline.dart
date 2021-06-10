@@ -9,7 +9,7 @@ class Headline extends ImplicitlyAnimatedWidget {
 
   Color get targetColor => headlineTextColors[index];
 
-  Headline({@required this.text, @required this.index, Key key})
+  Headline({required this.text, required this.index, Key? key})
       : super(key: key, duration: headlineAnimationDuration);
 
   @override
@@ -19,15 +19,15 @@ class Headline extends ImplicitlyAnimatedWidget {
 }
 
 class HeadlineState extends AnimatedWidgetBaseState<Headline> {
-  GhostFadeTween _colorTween;
+  GhostFadeTween? _colorTween;
 
-  SwitchStringTween _switchStringTween;
+  SwitchStringTween? _switchStringTween;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      '${_switchStringTween.evaluate(animation)}',
-      style: TextStyle(color: _colorTween.evaluate(animation)),
+      '${_switchStringTween!.evaluate(animation)}',
+      style: TextStyle(color: _colorTween!.evaluate(animation)),
     );
   }
 
@@ -37,23 +37,23 @@ class HeadlineState extends AnimatedWidgetBaseState<Headline> {
       _colorTween,
       widget.targetColor,
       (color) => GhostFadeTween(begin: color),
-    );
+    ) as GhostFadeTween?;
 
     _switchStringTween = visitor(
       _switchStringTween,
       widget.text,
       (value) => SwitchStringTween(begin: value),
-    );
+    ) as SwitchStringTween?;
   }
 }
 
 @visibleForTesting
-class GhostFadeTween extends Tween<Color> {
+class GhostFadeTween extends Tween<Color?> {
   final Color middle = Colors.white;
 
-  GhostFadeTween({Color begin, Color end}) : super(begin: begin, end: end);
+  GhostFadeTween({Color? begin, Color? end}) : super(begin: begin, end: end);
 
-  Color lerp(double t) {
+  Color? lerp(double t) {
     if (t < 0.5) {
       return Color.lerp(begin, middle, t * 2);
     } else {
@@ -63,10 +63,10 @@ class GhostFadeTween extends Tween<Color> {
 }
 
 @visibleForTesting
-class SwitchStringTween extends Tween<String> {
-  SwitchStringTween({String begin, String end}) : super(begin: begin, end: end);
+class SwitchStringTween extends Tween<String?> {
+  SwitchStringTween({String? begin, String? end}) : super(begin: begin, end: end);
 
-  String lerp(double t) {
+  String? lerp(double t) {
     if (t < 0.5) return begin;
     return end;
   }

@@ -10,11 +10,11 @@ import 'package:http/http.dart' as http;
 class Worker {
   static const _baseUrl = 'https://hacker-news.firebaseio.com/v0/';
 
-  SendPort _sendPort;
+  late SendPort _sendPort;
 
-  Isolate _isolate;
+  late Isolate _isolate;
 
-  Completer<List<Article>> _ids;
+  Completer<List<Article>>? _ids;
 
   final _isolateReady = Completer<void>();
 
@@ -36,7 +36,7 @@ class Worker {
 
     // TODO: deal with multiple simultaneous requests
     _ids = Completer<List<Article>>();
-    return _ids.future;
+    return _ids!.future;
   }
 
   Future<void> init() async {
@@ -68,11 +68,11 @@ class Worker {
     throw UnimplementedError("Undefined behavior for message: $message");
   }
 
-  static Future<Article> _getArticle(http.Client client, int id) async {
+  static Future<Article?> _getArticle(http.Client client, int id) async {
     var storyUrl = '${_baseUrl}item/$id.json';
     try {
-      var storyRes = await client.get(storyUrl);
-      if (storyRes.statusCode == 200 && storyRes.body != null) {
+      var storyRes = await client.get(Uri.parse(storyUrl));
+      if (storyRes.statusCode == 200) {
         return parseArticle(storyRes.body);
       } else {
         throw HackerNewsApiException(statusCode: storyRes.statusCode);
@@ -85,9 +85,9 @@ class Worker {
     }
   }
 
-  static Future<List<Article>> _getArticles(
+  static Future<List<Article?>> _getArticles(
       http.Client client, List<int> articleIds) async {
-    final results = <Article>[];
+    final results = <Article?>[];
 
     // We are running the fetch of each article in parallel with Future.wait.
     // Here, we catch HackerNewsApiExceptions so that one API exception
@@ -101,19 +101,19 @@ class Worker {
       }
     });
     await Future.wait(futureArticles);
-    var filtered = results.where((a) => a.title != null).toList();
+    var filtered = results.where((a) => a!.title != null).toList();
     // Re-sort the articles according to the original order in [articleIds].
     // We need to do this because fetching the articles in parallel will
     // result in scrambled order.
     filtered.sort(
-        (a, b) => articleIds.indexOf(a.id).compareTo(articleIds.indexOf(b.id)));
+        (a, b) => articleIds.indexOf(a!.id).compareTo(articleIds.indexOf(b!.id)));
     return filtered;
   }
 
   static Future<List<int>> _getIds(http.Client client, String url) async {
     http.Response response;
     try {
-      response = await client.get(url);
+      response = await client.get(Uri.parse(url));
     } on SocketException catch (e) {
       throw HackerNewsApiException(message: "$url couldn't be fetched: $e");
     }
@@ -127,7 +127,7 @@ class Worker {
   }
 
   static void _isolateEntry(dynamic message) {
-    SendPort sendPort;
+    late SendPort sendPort;
     final receivePort = ReceivePort();
 
     receivePort.listen((dynamic message) async {

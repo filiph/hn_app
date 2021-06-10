@@ -27,7 +27,7 @@ void main() {
                 text: text,
                 index: index,
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   setState(() {
                     text = 'Bar';
@@ -63,7 +63,7 @@ void main() {
     int index = 0;
     Key buttonKey = GlobalKey();
     Key headlineKey = GlobalKey();
-    Headline headline;
+    Headline? headline;
 
     Widget widget = StatefulBuilder(
       builder: (BuildContext context, void Function(void Function()) setState) {
@@ -77,8 +77,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: Column(
             children: <Widget>[
-              headline,
-              FlatButton(
+              headline!,
+              TextButton(
                 onPressed: () {
                   setState(() {
                     text = 'Bar';
@@ -97,7 +97,7 @@ void main() {
       widget,
     );
 
-    expect(headline.targetColor, headlineTextColors[index]);
+    expect(headline!.targetColor, headlineTextColors[index]);
 
     await tester.pump();
 
@@ -105,6 +105,6 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(headline.targetColor, headlineTextColors[index]);
+    expect(headline!.targetColor, headlineTextColors[index]);
   });
 }

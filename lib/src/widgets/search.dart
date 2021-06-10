@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hn_app/src/article.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ArticleSearch extends SearchDelegate<Article> {
+class ArticleSearch extends SearchDelegate<Article?> {
   final UnmodifiableListView<Article> articles;
 
   ArticleSearch(this.articles);
@@ -33,20 +33,20 @@ class ArticleSearch extends SearchDelegate<Article> {
   @override
   Widget buildResults(BuildContext context) {
     var results = articles
-        .where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
+        .where((a) => a.title!.toLowerCase().contains(query.toLowerCase()));
 
     return ListView(
       children: results
           .map<ListTile>((a) => ListTile(
-                title: Text(a.title,
+                title: Text(a.title!,
                     style: Theme.of(context)
                         .textTheme
-                        .subhead
+                        .subtitle1!
                         .copyWith(fontSize: 16.0)),
                 leading: Icon(Icons.book),
                 onTap: () async {
-                  if (await canLaunch(a.url)) {
-                    await launch(a.url);
+                  if (await canLaunch(a.url!)) {
+                    await launch(a.url!);
                   }
                   close(context, a);
                 },
@@ -58,13 +58,13 @@ class ArticleSearch extends SearchDelegate<Article> {
   @override
   Widget buildSuggestions(BuildContext context) {
     final results = articles
-        .where((a) => a.title.toLowerCase().contains(query.toLowerCase()));
+        .where((a) => a.title!.toLowerCase().contains(query.toLowerCase()));
 
     return ListView(
       children: results
           .map<ListTile>((a) => ListTile(
-                title: Text(a.title,
-                    style: Theme.of(context).textTheme.subhead.copyWith(
+                title: Text(a.title!,
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
                           fontSize: 16.0,
                           color: Colors.blue,
                         )),

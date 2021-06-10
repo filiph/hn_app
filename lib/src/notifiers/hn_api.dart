@@ -23,7 +23,7 @@ class LoadingTabsCount extends ValueNotifier<int> {
 class HackerNewsNotifier with ChangeNotifier {
   static final _log = Logger('HackerNewsNotifier');
 
-  List<HackerNewsTab> _tabs;
+  late List<HackerNewsTab> _tabs;
 
   HackerNewsNotifier(LoadingTabsCount loading) {
     _log.fine('constructor called');
@@ -110,8 +110,8 @@ enum StoriesType {
 }
 
 class HackerNewsApiException implements Exception {
-  final int statusCode;
-  final String message;
+  final int? statusCode;
+  final String? message;
 
   const HackerNewsApiException({this.statusCode, this.message});
 }

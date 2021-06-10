@@ -15,8 +15,7 @@ abstract class Article implements Built<Article, ArticleBuilder> {
 
   int get id;
 
-  @nullable
-  bool get deleted;
+  bool? get deleted;
 
   /// This is the type of the article.
   ///
@@ -27,37 +26,29 @@ abstract class Article implements Built<Article, ArticleBuilder> {
 
   int get time;
 
-  @nullable
-  String get text;
+  String? get text;
 
-  @nullable
-  bool get dead;
+  bool? get dead;
 
-  @nullable
-  int get parent;
+  int? get parent;
 
-  @nullable
-  int get poll;
+  int? get poll;
 
-  BuiltList<int> get kids;
+  BuiltList<int>? get kids;
 
-  @nullable
-  String get url;
+  String? get url;
 
-  @nullable
-  int get score;
+  int? get score;
 
-  @nullable
-  String get title;
+  String? get title;
 
-  BuiltList<int> get parts;
+  BuiltList<int>? get parts;
 
-  @nullable
-  int get descendants;
+  int? get descendants;
 
   Article._();
 
-  factory Article([updates(ArticleBuilder b)]) = _$Article;
+  factory Article([updates(ArticleBuilder b)?]) = _$Article;
 }
 
 List<int> parseStoryIds(String jsonStr) {
@@ -66,7 +57,7 @@ List<int> parseStoryIds(String jsonStr) {
   return listOfIds;
 }
 
-Article parseArticle(String jsonStr) {
+Article? parseArticle(String jsonStr) {
   var parsed = json.jsonDecode(jsonStr);
   var article = standardSerializers.deserializeWith(Article.serializer, parsed);
   return article;

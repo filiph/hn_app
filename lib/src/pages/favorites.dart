@@ -9,7 +9,7 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  List<Favorite> _favorites;
+  late List<Favorite> _favorites;
 
   @override
   void initState() {
@@ -36,9 +36,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   itemCount: snapshot.data?.length,
                   itemBuilder: (_, index) {
                     if (snapshot.data == null) {
-                      return null;
+                      return Container();
                     }
-                    Favorite article = snapshot.data[index];
+                    Favorite article = snapshot.data![index];
 
                     return ListTile(
                       leading: IconButton(
@@ -48,7 +48,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             // TODO(fitza): verify that this is or isn't best practice
                             setState(() => {});
                           }),
-                      title: Text(snapshot.data[index].title),
+                      title: Text(snapshot.data![index].title),
                       onTap: () {
                         Navigator.push(
                             context,

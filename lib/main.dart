@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -33,18 +31,18 @@ void main() {
     MultiProvider(
       providers: [
         ListenableProvider<LoadingTabsCount>(
-          builder: (_) => LoadingTabsCount(),
+          create: (_) => LoadingTabsCount(),
           dispose: (_, value) => value.dispose(),
         ),
-        Provider<MyDatabase>(builder: (_) => MyDatabase()),
+        Provider<MyDatabase>(create: (_) => MyDatabase()),
         ChangeNotifierProvider(
-          builder: (context) => HackerNewsNotifier(
+          create: (context) => HackerNewsNotifier(
             // TODO(filiph): revisit when ProxyProvider lands
             // https://github.com/rrousselGit/provider/issues/46
             Provider.of<LoadingTabsCount>(context, listen: false),
           ),
         ),
-        ChangeNotifierProvider(builder: (_) => PrefsNotifier()),
+        ChangeNotifierProvider(create: (_) => PrefsNotifier()),
       ],
       child: MyApp(),
     ),
@@ -142,14 +140,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handlePageChange() {
-    final newIndex = _pageController.page.round();
+    final newIndex = _pageController.page!.round();
 
     if (_currentIndex != newIndex) {
       setState(() {
         _currentIndex = newIndex;
       });
 
-      final hn = Provider.of<HackerNewsNotifier>(context);
+      final hn = context.read<HackerNewsNotifier>();
       final tabs = hn.tabs;
       final current = tabs[_currentIndex];
 
@@ -162,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final hn = Provider.of<HackerNewsNotifier>(context);
+    final hn = context.watch<HackerNewsNotifier>();
     final tabs = hn.tabs;
 
     return Scaffold(
@@ -222,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
               controller: _pageController,
               itemCount: tabs.length,
               itemBuilder: (context, index) => ChangeNotifierProvider.value(
-                notifier: tabs[index],
+                value: tabs[index],
                 child: _TabPage(index),
               ),
             ),
@@ -235,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
         items: [
           for (final tab in tabs)
             BottomNavigationBarItem(
-              title: Text(tab.name),
+              label: tab.name,
               icon: Icon(tab.icon),
             )
         ],
@@ -281,9 +279,9 @@ class _Item extends StatelessWidget {
   final PrefsNotifier prefs;
 
   const _Item({
-    Key key,
-    @required this.article,
-    @required this.prefs,
+    Key? key,
+    required this.article,
+    required this.prefs,
   }) : super(key: key);
 
   @override
@@ -300,7 +298,7 @@ class _Item extends StatelessWidget {
             leading: StreamBuilder<bool>(
                 stream: myDatabase.isFavorite(article.id),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data) {
+                  if (snapshot.hasData && snapshot.data!) {
                     return IconButton(
                         icon: Icon(Icons.star),
                         onPressed: () => myDatabase.removeFavorite(article.id));
@@ -309,7 +307,7 @@ class _Item extends StatelessWidget {
                       icon: Icon(Icons.star_border),
                       onPressed: () => myDatabase.addFavorite(article));
                 }),
-            title: Text(article.title),
+            title: Text(article.title!),
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -320,7 +318,7 @@ class _Item extends StatelessWidget {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(left: 46),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -368,7 +366,7 @@ class _Item extends StatelessWidget {
 class _TabPage extends StatelessWidget {
   final int index;
 
-  _TabPage(this.index, {Key key}) : super(key: key);
+  _TabPage(this.index, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

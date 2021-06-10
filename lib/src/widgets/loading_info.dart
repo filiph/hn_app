@@ -12,7 +12,7 @@ class LoadingInfo extends StatefulWidget {
 
 class LoadingInfoState extends State<LoadingInfo>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {
