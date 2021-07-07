@@ -57,8 +57,13 @@ List<int> parseStoryIds(String jsonStr) {
   return listOfIds;
 }
 
-Article? parseArticle(String jsonStr) {
+Article parseArticle(String jsonStr) {
   var parsed = json.jsonDecode(jsonStr);
   var article = standardSerializers.deserializeWith(Article.serializer, parsed);
+
+  if (article == null) {
+    // TODO(fitza) choose a better exception and message
+    throw StateError("null article");
+  }
   return article;
 }

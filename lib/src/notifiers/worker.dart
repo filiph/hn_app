@@ -68,7 +68,7 @@ class Worker {
     throw UnimplementedError("Undefined behavior for message: $message");
   }
 
-  static Future<Article?> _getArticle(http.Client client, int id) async {
+  static Future<Article> _getArticle(http.Client client, int id) async {
     var storyUrl = '${_baseUrl}item/$id.json';
     try {
       var storyRes = await client.get(Uri.parse(storyUrl));
@@ -85,9 +85,9 @@ class Worker {
     }
   }
 
-  static Future<List<Article?>> _getArticles(
+  static Future<List<Article>> _getArticles(
       http.Client client, List<int> articleIds) async {
-    final results = <Article?>[];
+    final results = <Article>[];
 
     // We are running the fetch of each article in parallel with Future.wait.
     // Here, we catch HackerNewsApiExceptions so that one API exception
@@ -101,12 +101,12 @@ class Worker {
       }
     });
     await Future.wait(futureArticles);
-    var filtered = results.where((a) => a!.title != null).toList();
+    var filtered = results.where((a) => a.title != null).toList();
     // Re-sort the articles according to the original order in [articleIds].
     // We need to do this because fetching the articles in parallel will
     // result in scrambled order.
     filtered.sort(
-        (a, b) => articleIds.indexOf(a!.id).compareTo(articleIds.indexOf(b!.id)));
+        (a, b) => articleIds.indexOf(a.id).compareTo(articleIds.indexOf(b.id)));
     return filtered;
   }
 

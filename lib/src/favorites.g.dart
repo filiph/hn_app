@@ -188,54 +188,29 @@ class $FavoritesTable extends Favorites
   final String? _alias;
   $FavoritesTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedIntColumn id = _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        $customConstraints: 'UNIQUE');
-  }
-
+  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+      'id', aliasedName, false,
+      typeName: 'INTEGER',
+      requiredDuringInsert: true,
+      $customConstraints: 'UNIQUE');
   final VerificationMeta _titleMeta = const VerificationMeta('title');
-  @override
-  late final GeneratedTextColumn title = _constructTitle();
-  GeneratedTextColumn _constructTitle() {
-    return GeneratedTextColumn(
-      'title',
-      $tableName,
-      false,
-    );
-  }
-
+  late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
+      'title', aliasedName, false,
+      typeName: 'TEXT', requiredDuringInsert: true);
   final VerificationMeta _urlMeta = const VerificationMeta('url');
-  @override
-  late final GeneratedTextColumn url = _constructUrl();
-  GeneratedTextColumn _constructUrl() {
-    return GeneratedTextColumn(
-      'url',
-      $tableName,
-      false,
-    );
-  }
-
+  late final GeneratedColumn<String?> url = GeneratedColumn<String?>(
+      'url', aliasedName, false,
+      typeName: 'TEXT', requiredDuringInsert: true);
   final VerificationMeta _categoryMeta = const VerificationMeta('category');
-  @override
-  late final GeneratedTextColumn category = _constructCategory();
-  GeneratedTextColumn _constructCategory() {
-    return GeneratedTextColumn(
-      'category',
-      $tableName,
-      true,
-    );
-  }
-
+  late final GeneratedColumn<String?> category = GeneratedColumn<String?>(
+      'category', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [id, title, url, category];
   @override
-  $FavoritesTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'favorites';
   @override
-  String get $tableName => _alias ?? 'favorites';
-  @override
-  final String actualTableName = 'favorites';
+  String get actualTableName => 'favorites';
   @override
   VerificationContext validateIntegrity(Insertable<Favorite> instance,
       {bool isInserting = false}) {

@@ -123,7 +123,7 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
           break;
         case 'deleted':
           result.deleted = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
+              specifiedType: const FullType(bool)) as bool?;
           break;
         case 'type':
           result.type = serializers.deserialize(value,
@@ -139,47 +139,47 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
           break;
         case 'text':
           result.text = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'dead':
           result.dead = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
+              specifiedType: const FullType(bool)) as bool?;
           break;
         case 'parent':
           result.parent = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int)) as int?;
           break;
         case 'poll':
           result.poll = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int)) as int?;
           break;
         case 'kids':
           result.kids.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(int)]))!
-              as BuiltList<Object>);
+              as BuiltList<Object?>);
           break;
         case 'url':
           result.url = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'score':
           result.score = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int)) as int?;
           break;
         case 'title':
           result.title = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'parts':
           result.parts.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(int)]))!
-              as BuiltList<Object>);
+              as BuiltList<Object?>);
           break;
         case 'descendants':
           result.descendants = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(int)) as int?;
           break;
       }
     }
